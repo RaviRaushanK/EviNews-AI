@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Environment files (never commit secrets)
+.env
+
+# Logs and temporary files
+logs/
+uploads/
+
+# IDE / OS files
+.vscode/
+*.swp
+*~
+.DS_Store

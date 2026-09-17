@@ -1,0 +1,13 @@
+/* EviNews-AI custom styles (Phase 0) */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.hero {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.navbar-brand {
+  letter-spacing: -0.5px;
+}
