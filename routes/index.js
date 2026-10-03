@@ -5,6 +5,7 @@
 const express = require('express');
 const collectionController = require('../controllers/collectionController');
 const processingController = require('../controllers/processingController');
+const claimController = require('../controllers/claimController');
 
 const router = express.Router();
 
@@ -24,6 +25,12 @@ router.post('/process/articles/reconcile', processingController.reconcileArticle
 router.post('/cluster/articles', processingController.clusterArticles);
 router.get('/events', processingController.listEvents);
 router.get('/events/:id', processingController.getEvent);
+
+// Phase 4: claim extraction + claim inspection endpoints.
+router.post('/claims/extract', claimController.extractClaims);
+router.post('/claims/extract/:articleId', claimController.extractClaimsForArticle);
+router.get('/events/:id/claims', claimController.listEventClaims);
+router.get('/articles/:id/claims', claimController.listArticleClaims);
 
 module.exports = router;
 

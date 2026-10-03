@@ -11,7 +11,10 @@
     "collect:newsapi": "node scripts/collect-newsapi.js",
     "collect:rss": "node scripts/collect-rss.js",
     "process:articles": "node scripts/process-articles.js",
-    "cluster:articles": "node scripts/cluster-articles.js"
+    "cluster:articles": "node scripts/cluster-articles.js",
+    "claims:extract": "node scripts/extract-claims.js",
+    "claims:verify": "node scripts/verify-claims.js",
+    "claims:test": "node scripts/test-claim-validation.js"
   },
   "dependencies": {
     "@google/genai": "^2.22.0",
