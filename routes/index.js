@@ -6,6 +6,7 @@ const express = require('express');
 const collectionController = require('../controllers/collectionController');
 const processingController = require('../controllers/processingController');
 const claimController = require('../controllers/claimController');
+const contradictionController = require('../controllers/contradictionController');
 
 const router = express.Router();
 
@@ -31,6 +32,12 @@ router.post('/claims/extract', claimController.extractClaims);
 router.post('/claims/extract/:articleId', claimController.extractClaimsForArticle);
 router.get('/events/:id/claims', claimController.listEventClaims);
 router.get('/articles/:id/claims', claimController.listArticleClaims);
+
+// Phase 5: contradiction detection and read-only inspection endpoints.
+router.post('/events/:eventId/contradictions/detect', contradictionController.detectForEvent);
+router.get('/events/:eventId/contradictions', contradictionController.listForEvent);
+router.get('/claims/:claimId/contradictions', contradictionController.listForClaim);
+router.get('/claims/:claimId/contradiction-checks', contradictionController.listChecksForClaim);
 
 module.exports = router;
 

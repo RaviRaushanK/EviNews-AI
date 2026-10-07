@@ -18,6 +18,7 @@ function loadModels() {
     'claim',
     'claimEvidence',
     'contradiction',
+    'contradictionCheck',
     'timelineEvent',
     'summary',
     'summaryClaim'

@@ -14,7 +14,13 @@
     "cluster:articles": "node scripts/cluster-articles.js",
     "claims:extract": "node scripts/extract-claims.js",
     "claims:verify": "node scripts/verify-claims.js",
-    "claims:test": "node scripts/test-claim-validation.js"
+    "claims:test": "node scripts/test-claim-validation.js",
+    "contradictions:test": "node scripts/test-contradiction-validation.js",
+    "contradictions:candidates:test": "node scripts/test-contradiction-candidates.js",
+    "contradictions:detection:test": "node scripts/test-contradiction-detection.js",
+    "contradictions:query:test": "node scripts/test-contradiction-query.js",
+    "contradictions:controller:test": "node scripts/test-contradiction-controller.js",
+    "contradictions:evaluate": "node scripts/evaluate-contradictions.js"
   },
   "dependencies": {
     "@google/genai": "^2.22.0",

@@ -1,0 +1,224 @@
+{
+  "version": "1.0",
+  "cases": [
+    {
+      "id": "direct-001",
+      "category": "direct",
+      "claim_a": { "id": "eval-c001-a", "article_id": "eval-a001-a", "claim_text": "The central bank raised the policy rate to 5 percent on Tuesday.", "claim_type": "data", "evidence_text": "On Tuesday, the central bank raised the policy rate to 5 percent.", "article_title": "Central bank rate decision", "source_name": "Evaluation Source A", "published_at": "2026-01-06T10:00:00Z" },
+      "claim_b": { "id": "eval-c001-b", "article_id": "eval-a001-b", "claim_text": "The central bank kept the policy rate unchanged at 5 percent on Tuesday.", "claim_type": "data", "evidence_text": "The policy rate was kept unchanged at 5 percent on Tuesday.", "article_title": "Rates held steady", "source_name": "Evaluation Source B", "published_at": "2026-01-06T10:30:00Z" },
+      "expected": { "classification": "direct", "candidate_expected": true }
+    },
+    {
+      "id": "direct-002",
+      "category": "direct",
+      "claim_a": { "id": "eval-c002-a", "article_id": "eval-a002-a", "claim_text": "The Riverside factory was open throughout Wednesday.", "claim_type": "fact", "evidence_text": "Workers entered the Riverside factory throughout Wednesday.", "article_title": "Factory remains open", "source_name": "Evaluation Source A", "published_at": "2026-02-04T18:00:00Z" },
+      "claim_b": { "id": "eval-c002-b", "article_id": "eval-a002-b", "claim_text": "The Riverside factory was closed throughout Wednesday.", "claim_type": "fact", "evidence_text": "The Riverside factory stayed closed for all of Wednesday.", "article_title": "Factory closure", "source_name": "Evaluation Source B", "published_at": "2026-02-04T18:15:00Z" },
+      "expected": { "classification": "direct", "candidate_expected": true }
+    },
+    {
+      "id": "direct-003",
+      "category": "direct",
+      "claim_a": { "id": "eval-c003-a", "article_id": "eval-a003-a", "claim_text": "Candidate Lee won the North District election.", "claim_type": "fact", "evidence_text": "Officials declared Candidate Lee the North District winner.", "article_title": "Lee wins district", "source_name": "Evaluation Source A", "published_at": "2026-03-02T09:00:00Z" },
+      "claim_b": { "id": "eval-c003-b", "article_id": "eval-a003-b", "claim_text": "Candidate Lee did not win the North District election; Candidate Rao won.", "claim_type": "fact", "evidence_text": "Candidate Rao, not Lee, was declared the North District winner.", "article_title": "Rao declared winner", "source_name": "Evaluation Source B", "published_at": "2026-03-02T09:10:00Z" },
+      "expected": { "classification": "direct", "candidate_expected": true }
+    },
+    {
+      "id": "direct-004",
+      "category": "number_disagreement",
+      "claim_a": { "id": "eval-c004-a", "article_id": "eval-a004-a", "claim_text": "Company X laid off 1,000 workers on Monday.", "claim_type": "data", "evidence_text": "Exactly 1,000 Company X workers were laid off Monday.", "article_title": "Company X layoffs", "source_name": "Evaluation Source A", "published_at": "2026-04-07T08:00:00Z" },
+      "claim_b": { "id": "eval-c004-b", "article_id": "eval-a004-b", "claim_text": "Company X laid off 2,000 workers on Monday.", "claim_type": "data", "evidence_text": "The Monday layoffs affected 2,000 Company X workers.", "article_title": "Company X layoff total", "source_name": "Evaluation Source B", "published_at": "2026-04-07T08:30:00Z" },
+      "expected": { "classification": "direct", "candidate_expected": true }
+    },
+    {
+      "id": "direct-005",
+      "category": "predicate_disagreement",
+      "claim_a": { "id": "eval-c005-a", "article_id": "eval-a005-a", "claim_text": "The Harbor Bridge reopened to traffic at noon Friday.", "claim_type": "fact", "evidence_text": "Traffic began crossing Harbor Bridge at noon Friday.", "article_title": "Harbor Bridge reopens", "source_name": "Evaluation Source A", "published_at": "2026-05-08T13:00:00Z" },
+      "claim_b": { "id": "eval-c005-b", "article_id": "eval-a005-b", "claim_text": "The Harbor Bridge remained closed to traffic at noon Friday.", "claim_type": "fact", "evidence_text": "At noon Friday, Harbor Bridge was still closed to traffic.", "article_title": "Bridge still closed", "source_name": "Evaluation Source B", "published_at": "2026-05-08T13:05:00Z" },
+      "expected": { "classification": "direct", "candidate_expected": true }
+    },
+    {
+      "id": "direct-006",
+      "category": "quote_attribution",
+      "claim_a": { "id": "eval-c006-a", "article_id": "eval-a006-a", "claim_text": "Minister Shah said, 'I approved the harbor plan on Thursday.'", "claim_type": "quote", "evidence_text": "Minister Shah said: I approved the harbor plan on Thursday.", "article_title": "Minister says plan approved", "source_name": "Evaluation Source A", "published_at": "2026-06-12T10:00:00Z" },
+      "claim_b": { "id": "eval-c006-b", "article_id": "eval-a006-b", "claim_text": "Minister Shah said, 'I did not approve the harbor plan on Thursday.'", "claim_type": "quote", "evidence_text": "Shah said: I did not approve the harbor plan on Thursday.", "article_title": "Minister denies approval", "source_name": "Evaluation Source B", "published_at": "2026-06-12T10:10:00Z" },
+      "expected": { "classification": "direct", "candidate_expected": true }
+    },
+    {
+      "id": "direct-007",
+      "category": "same_article",
+      "claim_a": { "id": "eval-c007-a", "article_id": "eval-a007-shared", "claim_text": "The report states that eight people died in the station fire.", "claim_type": "data", "evidence_text": "Eight people died in the station fire.", "article_title": "Conflicting tolls in one report", "source_name": "Evaluation Source A", "published_at": "2026-07-01T12:00:00Z" },
+      "claim_b": { "id": "eval-c007-b", "article_id": "eval-a007-shared", "claim_text": "The report states that ten people died in the station fire.", "claim_type": "data", "evidence_text": "Ten people died in the station fire.", "article_title": "Conflicting tolls in one report", "source_name": "Evaluation Source A", "published_at": "2026-07-01T12:00:00Z" },
+      "expected": { "classification": "direct", "candidate_expected": false }
+    },
+    {
+      "id": "partial-001",
+      "category": "partial",
+      "claim_a": { "id": "eval-c008-a", "article_id": "eval-a008-a", "claim_text": "The government approved the relief plan for all states.", "claim_type": "fact", "evidence_text": "All states were included in the approved relief plan.", "article_title": "Nationwide relief approved", "source_name": "Evaluation Source A", "published_at": "2026-01-15T08:00:00Z" },
+      "claim_b": { "id": "eval-c008-b", "article_id": "eval-a008-b", "claim_text": "The government approved the relief plan for only five states.", "claim_type": "fact", "evidence_text": "Only five states were included in the relief approval.", "article_title": "Five states receive relief", "source_name": "Evaluation Source B", "published_at": "2026-01-15T08:20:00Z" },
+      "expected": { "classification": "partial", "candidate_expected": true }
+    },
+    {
+      "id": "partial-002",
+      "category": "partial",
+      "claim_a": { "id": "eval-c009-a", "article_id": "eval-a009-a", "claim_text": "The evacuation order covers the entire coastal province.", "claim_type": "fact", "evidence_text": "Residents across the entire coastal province were ordered to evacuate.", "article_title": "Province-wide evacuation", "source_name": "Evaluation Source A", "published_at": "2026-02-10T06:00:00Z" },
+      "claim_b": { "id": "eval-c009-b", "article_id": "eval-a009-b", "claim_text": "The evacuation order covers only the northern coastal districts.", "claim_type": "fact", "evidence_text": "Only northern coastal districts received evacuation orders.", "article_title": "Northern districts evacuate", "source_name": "Evaluation Source B", "published_at": "2026-02-10T06:10:00Z" },
+      "expected": { "classification": "partial", "candidate_expected": true }
+    },
+    {
+      "id": "partial-003",
+      "category": "partial",
+      "claim_a": { "id": "eval-c010-a", "article_id": "eval-a010-a", "claim_text": "The bonus will be paid to all Metro Rail employees.", "claim_type": "fact", "evidence_text": "Every Metro Rail employee will receive the bonus.", "article_title": "Rail bonus announced", "source_name": "Evaluation Source A", "published_at": "2026-03-18T11:00:00Z" },
+      "claim_b": { "id": "eval-c010-b", "article_id": "eval-a010-b", "claim_text": "The bonus will be paid only to permanent Metro Rail employees, not contractors.", "claim_type": "fact", "evidence_text": "Only permanent employees qualify; contractors are excluded.", "article_title": "Contractors excluded from bonus", "source_name": "Evaluation Source B", "published_at": "2026-03-18T11:30:00Z" },
+      "expected": { "classification": "partial", "candidate_expected": true }
+    },
+    {
+      "id": "partial-004",
+      "category": "partial",
+      "claim_a": { "id": "eval-c011-a", "article_id": "eval-a011-a", "claim_text": "The merger received unconditional regulatory approval.", "claim_type": "fact", "evidence_text": "Regulators approved the merger without conditions.", "article_title": "Merger approved", "source_name": "Evaluation Source A", "published_at": "2026-04-20T14:00:00Z" },
+      "claim_b": { "id": "eval-c011-b", "article_id": "eval-a011-b", "claim_text": "The merger received regulatory approval only if three branches are sold.", "claim_type": "fact", "evidence_text": "Approval requires the sale of three branches.", "article_title": "Conditions attached to merger", "source_name": "Evaluation Source B", "published_at": "2026-04-20T14:05:00Z" },
+      "expected": { "classification": "partial", "candidate_expected": true }
+    },
+    {
+      "id": "partial-005",
+      "category": "partial",
+      "claim_a": { "id": "eval-c012-a", "article_id": "eval-a012-a", "claim_text": "Police confirmed that both suspects were arrested downtown.", "claim_type": "fact", "evidence_text": "Police said both suspects were arrested downtown.", "article_title": "Two suspects arrested", "source_name": "Evaluation Source A", "published_at": "2026-05-11T16:00:00Z" },
+      "claim_b": { "id": "eval-c012-b", "article_id": "eval-a012-b", "claim_text": "Police confirmed that one suspect was arrested downtown while the other remained free.", "claim_type": "fact", "evidence_text": "Police said one suspect was arrested and one was still free.", "article_title": "One suspect remains free", "source_name": "Evaluation Source B", "published_at": "2026-05-11T16:10:00Z" },
+      "expected": { "classification": "partial", "candidate_expected": true }
+    },
+    {
+      "id": "partial-006",
+      "category": "partial",
+      "claim_a": { "id": "eval-c013-a", "article_id": "eval-a013-a", "claim_text": "The council approved both the solar project and the wind project.", "claim_type": "fact", "evidence_text": "Council members approved the solar and wind projects.", "article_title": "Renewable projects pass", "source_name": "Evaluation Source A", "published_at": "2026-06-22T19:00:00Z" },
+      "claim_b": { "id": "eval-c013-b", "article_id": "eval-a013-b", "claim_text": "The council approved the solar project but rejected the wind project.", "claim_type": "fact", "evidence_text": "The solar proposal passed while the wind proposal was rejected.", "article_title": "Council splits renewable vote", "source_name": "Evaluation Source B", "published_at": "2026-06-22T19:10:00Z" },
+      "expected": { "classification": "partial", "candidate_expected": true }
+    },
+    {
+      "id": "partial-007",
+      "category": "number_disagreement",
+      "claim_a": { "id": "eval-c014-a", "article_id": "eval-a014-a", "claim_text": "Between 500 and 600 homes were damaged by the storm.", "claim_type": "data", "evidence_text": "Officials estimated damage to 500 to 600 homes.", "article_title": "Storm damage estimate", "source_name": "Evaluation Source A", "published_at": "2026-07-09T09:00:00Z" },
+      "claim_b": { "id": "eval-c014-b", "article_id": "eval-a014-b", "claim_text": "Exactly 500 homes were damaged, including 80 that were destroyed.", "claim_type": "data", "evidence_text": "The final count listed 500 damaged homes and 80 destroyed homes.", "article_title": "Storm damage count", "source_name": "Evaluation Source B", "published_at": "2026-07-09T09:05:00Z" },
+      "expected": { "classification": "partial", "candidate_expected": true }
+    },
+    {
+      "id": "temporal-001",
+      "category": "temporal",
+      "claim_a": { "id": "eval-c015-a", "article_id": "eval-a015-a", "claim_text": "The payment service was suspended at noon on Tuesday.", "claim_type": "fact", "evidence_text": "At noon Tuesday the payment service was suspended.", "article_title": "Payment service suspended", "source_name": "Evaluation Source A", "published_at": "2026-01-20T13:00:00Z" },
+      "claim_b": { "id": "eval-c015-b", "article_id": "eval-a015-b", "claim_text": "The payment service was operating normally at noon on Tuesday.", "claim_type": "fact", "evidence_text": "Transactions were operating normally at noon Tuesday.", "article_title": "Payment service operational", "source_name": "Evaluation Source B", "published_at": "2026-01-20T13:05:00Z" },
+      "expected": { "classification": "temporal", "candidate_expected": true }
+    },
+    {
+      "id": "temporal-002",
+      "category": "temporal",
+      "claim_a": { "id": "eval-c016-a", "article_id": "eval-a016-a", "claim_text": "The satellite launched before dawn on 3 February.", "claim_type": "fact", "evidence_text": "The satellite lifted off at 4:15 a.m. on 3 February.", "article_title": "Pre-dawn satellite launch", "source_name": "Evaluation Source A", "published_at": "2026-02-03T06:00:00Z" },
+      "claim_b": { "id": "eval-c016-b", "article_id": "eval-a016-b", "claim_text": "The satellite launched after noon on 3 February.", "claim_type": "fact", "evidence_text": "Liftoff occurred at 1:10 p.m. on 3 February.", "article_title": "Afternoon satellite launch", "source_name": "Evaluation Source B", "published_at": "2026-02-03T14:00:00Z" },
+      "expected": { "classification": "temporal", "candidate_expected": true }
+    },
+    {
+      "id": "temporal-003",
+      "category": "temporal",
+      "claim_a": { "id": "eval-c017-a", "article_id": "eval-a017-a", "claim_text": "The port closure lasted three days in March.", "claim_type": "data", "evidence_text": "The March port closure ended after three days.", "article_title": "Port reopens after three days", "source_name": "Evaluation Source A", "published_at": "2026-03-10T10:00:00Z" },
+      "claim_b": { "id": "eval-c017-b", "article_id": "eval-a017-b", "claim_text": "The port closure lasted seven days in March.", "claim_type": "data", "evidence_text": "The port remained closed for seven days in March.", "article_title": "Week-long port closure", "source_name": "Evaluation Source B", "published_at": "2026-03-10T10:10:00Z" },
+      "expected": { "classification": "temporal", "candidate_expected": true }
+    },
+    {
+      "id": "temporal-004",
+      "category": "temporal",
+      "claim_a": { "id": "eval-c018-a", "article_id": "eval-a018-a", "claim_text": "The evacuation began before the warehouse fire was reported.", "claim_type": "fact", "evidence_text": "Workers began evacuating before the fire report.", "article_title": "Evacuation preceded fire report", "source_name": "Evaluation Source A", "published_at": "2026-04-02T15:00:00Z" },
+      "claim_b": { "id": "eval-c018-b", "article_id": "eval-a018-b", "claim_text": "The evacuation began after the warehouse fire was reported.", "claim_type": "fact", "evidence_text": "The fire report came first, followed by evacuation.", "article_title": "Evacuation followed fire report", "source_name": "Evaluation Source B", "published_at": "2026-04-02T15:10:00Z" },
+      "expected": { "classification": "temporal", "candidate_expected": true }
+    },
+    {
+      "id": "temporal-005",
+      "category": "temporal",
+      "claim_a": { "id": "eval-c019-a", "article_id": "eval-a019-a", "claim_text": "The regional office was open throughout 2020.", "claim_type": "fact", "evidence_text": "Records show the regional office operated throughout 2020.", "article_title": "Office history", "source_name": "Evaluation Source A", "published_at": "2026-05-01T09:00:00Z" },
+      "claim_b": { "id": "eval-c019-b", "article_id": "eval-a019-b", "claim_text": "The regional office was closed throughout 2020.", "claim_type": "fact", "evidence_text": "Records show the regional office remained closed for all of 2020.", "article_title": "Office closure history", "source_name": "Evaluation Source B", "published_at": "2026-05-01T09:10:00Z" },
+      "expected": { "classification": "temporal", "candidate_expected": true }
+    },
+    {
+      "id": "temporal-006",
+      "category": "temporal",
+      "claim_a": { "id": "eval-c020-a", "article_id": "eval-a020-a", "claim_text": "Applications closed at midnight on Monday.", "claim_type": "fact", "evidence_text": "The application deadline was midnight Monday.", "article_title": "Monday application deadline", "source_name": "Evaluation Source A", "published_at": "2026-06-16T08:00:00Z" },
+      "claim_b": { "id": "eval-c020-b", "article_id": "eval-a020-b", "claim_text": "Applications remained open until midnight on Friday.", "claim_type": "fact", "evidence_text": "Applicants could submit forms through midnight Friday.", "article_title": "Friday application deadline", "source_name": "Evaluation Source B", "published_at": "2026-06-16T08:05:00Z" },
+      "expected": { "classification": "temporal", "candidate_expected": true }
+    },
+    {
+      "id": "temporal-007",
+      "category": "temporal",
+      "claim_a": { "id": "eval-c021-a", "article_id": "eval-a021-a", "claim_text": "As of 5 p.m. Thursday, train service had resumed.", "claim_type": "fact", "evidence_text": "Train service resumed by 5 p.m. Thursday.", "article_title": "Train service resumes", "source_name": "Evaluation Source A", "published_at": "2026-07-23T17:30:00Z" },
+      "claim_b": { "id": "eval-c021-b", "article_id": "eval-a021-b", "claim_text": "As of 5 p.m. Thursday, train service was still suspended.", "claim_type": "fact", "evidence_text": "Train service remained suspended at 5 p.m. Thursday.", "article_title": "Train service still suspended", "source_name": "Evaluation Source B", "published_at": "2026-07-23T17:35:00Z" },
+      "expected": { "classification": "temporal", "candidate_expected": true }
+    },
+    {
+      "id": "none-001",
+      "category": "paraphrase",
+      "claim_a": { "id": "eval-c022-a", "article_id": "eval-a022-a", "claim_text": "Company Y announced 500 new jobs.", "claim_type": "data", "evidence_text": "Company Y announced 500 new jobs.", "article_title": "Company Y hiring", "source_name": "Evaluation Source A", "published_at": "2026-01-05T10:00:00Z" },
+      "claim_b": { "id": "eval-c022-b", "article_id": "eval-a022-b", "claim_text": "Company Y announced 500 new jobs.", "claim_type": "data", "evidence_text": "Company Y announced 500 new jobs.", "article_title": "Five hundred jobs announced", "source_name": "Evaluation Source B", "published_at": "2026-01-05T10:05:00Z" },
+      "expected": { "classification": "none", "candidate_expected": false }
+    },
+    {
+      "id": "none-002",
+      "category": "paraphrase",
+      "claim_a": { "id": "eval-c023-a", "article_id": "eval-a023-a", "claim_text": "The city opened its new library on Saturday.", "claim_type": "fact", "evidence_text": "The new city library opened Saturday.", "article_title": "New library opens", "source_name": "Evaluation Source A", "published_at": "2026-02-07T12:00:00Z" },
+      "claim_b": { "id": "eval-c023-b", "article_id": "eval-a023-b", "claim_text": "On Saturday, the city's new library opened to the public.", "claim_type": "fact", "evidence_text": "The city library welcomed the public on Saturday.", "article_title": "Public enters new library", "source_name": "Evaluation Source B", "published_at": "2026-02-07T12:10:00Z" },
+      "expected": { "classification": "none", "candidate_expected": false }
+    },
+    {
+      "id": "none-003",
+      "category": "normal_update",
+      "normal_update": true,
+      "claim_a": { "id": "eval-c024-a", "article_id": "eval-a024-a", "claim_text": "On Monday, Company Z planned to cut 1,000 jobs.", "claim_type": "data", "evidence_text": "Company Z's Monday plan called for 1,000 job cuts.", "article_title": "Company Z plans cuts", "source_name": "Evaluation Source A", "published_at": "2026-03-02T10:00:00Z" },
+      "claim_b": { "id": "eval-c024-b", "article_id": "eval-a024-b", "claim_text": "On Friday, Company Z announced it will cut 2,000 jobs after revising the plan.", "claim_type": "data", "evidence_text": "The company revised its plan Friday and increased cuts to 2,000 jobs.", "article_title": "Company Z expands cuts", "source_name": "Evaluation Source B", "published_at": "2026-03-06T10:00:00Z" },
+      "expected": { "classification": "none", "candidate_expected": true }
+    },
+    {
+      "id": "none-004",
+      "category": "normal_update",
+      "normal_update": true,
+      "claim_a": { "id": "eval-c025-a", "article_id": "eval-a025-a", "claim_text": "The payment service was suspended on Monday morning.", "claim_type": "fact", "evidence_text": "The payment service was suspended Monday morning.", "article_title": "Payment outage begins", "source_name": "Evaluation Source A", "published_at": "2026-04-13T09:00:00Z" },
+      "claim_b": { "id": "eval-c025-b", "article_id": "eval-a025-b", "claim_text": "The payment service resumed on Monday evening after repairs.", "claim_type": "fact", "evidence_text": "Repairs finished and payment service resumed Monday evening.", "article_title": "Payment service restored", "source_name": "Evaluation Source B", "published_at": "2026-04-13T19:00:00Z" },
+      "expected": { "classification": "none", "candidate_expected": true }
+    },
+    {
+      "id": "none-005",
+      "category": "different_entity",
+      "claim_a": { "id": "eval-c026-a", "article_id": "eval-a026-a", "claim_text": "Alpha Corporation laid off 300 engineers.", "claim_type": "data", "evidence_text": "Alpha Corporation cut 300 engineering roles.", "article_title": "Alpha job cuts", "source_name": "Evaluation Source A", "published_at": "2026-05-04T09:00:00Z" },
+      "claim_b": { "id": "eval-c026-b", "article_id": "eval-a026-b", "claim_text": "Beta Industries hired 300 designers.", "claim_type": "data", "evidence_text": "Beta Industries added 300 design positions.", "article_title": "Beta hiring drive", "source_name": "Evaluation Source B", "published_at": "2026-05-04T09:10:00Z" },
+      "expected": { "classification": "none", "candidate_expected": false }
+    },
+    {
+      "id": "none-006",
+      "category": "different_event",
+      "claim_a": { "id": "eval-c027-a", "article_id": "eval-a027-a", "claim_text": "River flooding closed the East Valley highway.", "claim_type": "fact", "evidence_text": "Floodwater forced the East Valley highway to close.", "article_title": "Flood closes highway", "source_name": "Evaluation Source A", "published_at": "2026-06-08T07:00:00Z" },
+      "claim_b": { "id": "eval-c027-b", "article_id": "eval-a027-b", "claim_text": "A technical fault delayed flights at Westport airport.", "claim_type": "fact", "evidence_text": "Westport flights were delayed by a technical fault.", "article_title": "Airport delays", "source_name": "Evaluation Source B", "published_at": "2026-06-08T07:10:00Z" },
+      "expected": { "classification": "none", "candidate_expected": false }
+    },
+    {
+      "id": "none-007",
+      "category": "quote_attribution",
+      "claim_a": { "id": "eval-c028-a", "article_id": "eval-a028-a", "claim_text": "Mayor Singh said the transit budget was sufficient.", "claim_type": "quote", "evidence_text": "Mayor Singh: The transit budget is sufficient.", "article_title": "Mayor backs transit budget", "source_name": "Evaluation Source A", "published_at": "2026-07-14T10:00:00Z" },
+      "claim_b": { "id": "eval-c028-b", "article_id": "eval-a028-b", "claim_text": "Opposition leader Chen said the transit budget was insufficient.", "claim_type": "quote", "evidence_text": "Chen said the transit budget is insufficient.", "article_title": "Opposition criticizes budget", "source_name": "Evaluation Source B", "published_at": "2026-07-14T10:10:00Z" },
+      "expected": { "classification": "none", "candidate_expected": true }
+    },
+    {
+      "id": "none-008",
+      "category": "ambiguous_time",
+      "claim_a": { "id": "eval-c029-a", "article_id": "eval-a029-a", "claim_text": "The agency employed 4,000 workers, according to the report.", "claim_type": "data", "evidence_text": "The report lists agency employment at 4,000 workers but gives no reference date.", "article_title": "Agency staffing report", "source_name": "Evaluation Source A", "published_at": "2026-08-01T09:00:00Z" },
+      "claim_b": { "id": "eval-c029-b", "article_id": "eval-a029-b", "claim_text": "The agency employed 4,500 workers, according to another undated estimate.", "claim_type": "data", "evidence_text": "An estimate lists 4,500 agency workers without stating when the count applies.", "article_title": "Agency staffing estimate", "source_name": "Evaluation Source B", "published_at": "2026-08-02T09:00:00Z" },
+      "expected": { "classification": "none", "candidate_expected": true }
+    },
+    {
+      "id": "none-009",
+      "category": "quote_attribution",
+      "claim_a": { "id": "eval-c030-a", "article_id": "eval-a030-a", "claim_text": "Director Patel said the museum would reopen in September.", "claim_type": "quote", "evidence_text": "Patel said: The museum will reopen in September.", "article_title": "Museum reopening plan", "source_name": "Evaluation Source A", "published_at": "2026-08-10T09:00:00Z" },
+      "claim_b": { "id": "eval-c030-b", "article_id": "eval-a030-b", "claim_text": "Director Patel repeated that the museum would reopen in September.", "claim_type": "quote", "evidence_text": "Patel again said the museum will reopen in September.", "article_title": "Director repeats reopening date", "source_name": "Evaluation Source B", "published_at": "2026-08-11T09:00:00Z" },
+      "expected": { "classification": "none", "candidate_expected": true }
+    },
+    {
+      "id": "none-010",
+      "category": "complementary",
+      "claim_a": { "id": "eval-c031-a", "article_id": "eval-a031-a", "claim_text": "The Green Line extension opened three new stations.", "claim_type": "data", "evidence_text": "Three new Green Line stations opened.", "article_title": "Green Line extension opens", "source_name": "Evaluation Source A", "published_at": "2026-09-01T08:00:00Z" },
+      "claim_b": { "id": "eval-c031-b", "article_id": "eval-a031-b", "claim_text": "The Green Line extension adds service to the university district.", "claim_type": "fact", "evidence_text": "The extension now serves the university district.", "article_title": "University gains rail service", "source_name": "Evaluation Source B", "published_at": "2026-09-01T08:10:00Z" },
+      "expected": { "classification": "none", "candidate_expected": true }
+    }
+  ]
+}

@@ -107,7 +107,7 @@ function withTimeout(promise, timeoutMs, label) {
 
 /**
  * Runs one generateContent call with bounded retries and timeout handling.
- * Retries only rate-limit / server / timeout errors (max 3 attempts).
+ * Retries only rate-limit / server / timeout errors (max 5 attempts).
  *
  * @param {string} prompt
  * @param {object} options { model?, timeoutMs?, retryDelayMs?, maxAttempts? }
@@ -123,7 +123,7 @@ async function generateText(prompt, options = {}) {
   const model = resolveClaimModel(options);
   const timeoutMs = options.timeoutMs || claimsConfig.gemini.timeoutMs;
   const retryDelayMs = options.retryDelayMs || claimsConfig.gemini.retryDelayMs;
-  const maxAttempts = options.maxAttempts || 3;
+  const maxAttempts = options.maxAttempts || 5;
 
   const ai = getClient();
   let lastError = null;
@@ -154,7 +154,8 @@ async function generateText(prompt, options = {}) {
         throw lastError;
       }
       if (attempt < maxAttempts && isRetryable(lastError)) {
-        await sleep(retryDelayMs);
+        const backoffMs = Math.min(retryDelayMs * (2 ** (attempt - 1)), 30000);
+        await sleep(backoffMs);
         continue;
       }
       throw lastError;
