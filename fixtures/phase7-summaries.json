@@ -1,0 +1,49 @@
+{
+  "version": "phase7-summary-v1",
+  "context": {
+    "event": { "id": "70000000-0000-4000-8000-000000000001", "title": "Isolated Acme reporting fixture", "description": null, "status": "active", "event_date": "2026-10-01T00:00:00.000Z" },
+    "reports": [
+      { "article_id": "article-a", "title": "First report", "url": "https://fixture.invalid/a", "source": { "id": "source-a", "name": "Fixture A" }, "report_timestamp": "2026-10-01T10:00:00.000Z", "date_source": "published_at", "claims_status": "available", "claim_count": 1 },
+      { "article_id": "article-b", "title": "Second report", "url": "https://fixture.invalid/b", "source": { "id": "source-b", "name": "Fixture B" }, "report_timestamp": "2026-10-02T10:00:00.000Z", "date_source": "fetched_at", "claims_status": "available", "claim_count": 1 }
+    ],
+    "claims": [
+      { "claim_id": "claim-a", "article_id": "article-a", "claim_text": "Acme reported 100 jobs lost on 2026-10-01.", "claim_type": "data", "extraction_confidence": 0.9, "source": { "id": "source-a", "name": "Fixture A" }, "article_title": "First report", "report_timestamp": "2026-10-01T10:00:00.000Z", "date_source": "published_at" },
+      { "claim_id": "claim-b", "article_id": "article-b", "claim_text": "Acme reported 200 jobs lost on 2026-10-01.", "claim_type": "data", "extraction_confidence": 0.8, "source": { "id": "source-b", "name": "Fixture B" }, "article_title": "Second report", "report_timestamp": "2026-10-02T10:00:00.000Z", "date_source": "fetched_at" }
+    ],
+    "evidence": [
+      { "evidence_id": "evidence-a", "claim_id": "claim-a", "article_id": "article-a", "evidence_text": "Acme reported 100 jobs lost on 2026-10-01.", "evidence_hash": "7ed4f8cc237741ee08dbb88635243f467e6ca40103f9d0bd465fd324bfc7e9cc", "source_grounded": true },
+      { "evidence_id": "evidence-b", "claim_id": "claim-b", "article_id": "article-b", "evidence_text": "Acme reported 200 jobs lost on 2026-10-01.", "evidence_hash": "865d8b851675daadfe5ddd12214896fbfabe73f3e298982f4965752345182de1", "source_grounded": true }
+    ],
+    "contradictions": [],
+    "changes": [],
+    "coverage": { "status": "unknown", "contradictions": { "status": "unknown" }, "timeline": { "status": "complete", "coverage": {} } },
+    "warnings": [{ "code": "FIXTURE_UNKNOWN_COVERAGE", "message": "No claim-pair evaluation completeness is asserted." }],
+    "metadata": { "provider": "gemini", "model": "fixture-model-only", "prompt_version": "phase7-v1", "contract_version": "phase7-summary-v1" }
+  },
+  "statement": { "id": "s1", "text": "Acme reported 100 jobs lost on 2026-10-01.", "source_claim_ids": ["claim-a"], "evidence_ids": ["evidence-a"], "contradiction_ids": [], "attribution": "Fixture A" },
+  "cases": [
+    { "id": "fully-supported", "grounding": "supported" },
+    { "id": "multiple-claims", "set": [{ "path": ["context", "claims", 1, "claim_text"], "value": "Acme reported 100 jobs lost on 2026-10-01." }, { "path": ["context", "evidence", 1, "evidence_text"], "value": "Acme reported 100 jobs lost on 2026-10-01." }, { "path": ["context", "evidence", 1, "evidence_hash"], "value": "7ed4f8cc237741ee08dbb88635243f467e6ca40103f9d0bd465fd324bfc7e9cc" }, { "path": ["statement", "source_claim_ids"], "value": ["claim-a", "claim-b"] }, { "path": ["statement", "evidence_ids"], "value": ["evidence-a", "evidence-b"] }, { "path": ["statement", "attribution"], "value": "Fixture A; Fixture B" }], "grounding": "supported" },
+    { "id": "unsupported", "set": [{ "path": ["statement", "source_claim_ids"], "value": [] }, { "path": ["statement", "evidence_ids"], "value": [] }], "grounding": "unsupported" },
+    { "id": "partially-supported", "set": [{ "path": ["statement", "source_claim_ids"], "value": ["claim-a", "claim-b"] }, { "path": ["statement", "evidence_ids"], "value": ["evidence-a", "evidence-b"] }, { "path": ["statement", "attribution"], "value": "Fixture A; Fixture B" }], "grounding": "partially_supported" },
+    { "id": "conflicting", "set": [{ "path": ["context", "contradictions"], "value": [{ "contradiction_id": "relation-a", "claim_id_1": "claim-a", "claim_id_2": "claim-b", "contradiction_type": "direct", "status": "under_review", "reason": "Stored fixture disagreement", "evidence_ids": ["evidence-a", "evidence-b"] }] }], "grounding": "conflicting" },
+    { "id": "missing-claim", "set": [{ "path": ["statement", "source_claim_ids"], "value": ["missing"] }], "validation": "SUMMARY_UNKNOWN_CLAIM", "grounding": "unsupported" },
+    { "id": "missing-evidence", "set": [{ "path": ["statement", "evidence_ids"], "value": ["missing"] }], "validation": "SUMMARY_UNKNOWN_EVIDENCE", "grounding": "unsupported" },
+    { "id": "wrong-claim-evidence", "set": [{ "path": ["statement", "evidence_ids"], "value": ["evidence-b"] }], "validation": "SUMMARY_WRONG_EVIDENCE_CLAIM", "grounding": "unsupported" },
+    { "id": "cross-event", "set": [{ "path": ["context", "claims", 0, "article_id"], "value": "outside-event" }], "validation": "SUMMARY_CROSS_EVENT_REFERENCE", "grounding": "unsupported" },
+    { "id": "empty-evidence", "set": [{ "path": ["context", "evidence", 0, "evidence_text"], "value": "" }], "grounding": "unsupported" },
+    { "id": "stale-hash", "set": [{ "path": ["context", "evidence", 0, "evidence_hash"], "value": "stale" }], "grounding": "unsupported" },
+    { "id": "unknown-contradiction", "set": [{ "path": ["statement", "contradiction_ids"], "value": ["missing"] }], "validation": "SUMMARY_UNKNOWN_CONTRADICTION", "grounding": "unsupported" },
+    { "id": "unknown-coverage", "grounding": "supported" },
+    { "id": "limited-coverage", "set": [{ "path": ["context", "coverage", "contradictions", "status"], "value": "limited" }], "grounding": "supported" },
+    { "id": "zero-claims", "set": [{ "path": ["context", "claims"], "value": [] }, { "path": ["context", "evidence"], "value": [] }, { "path": ["statement", "source_claim_ids"], "value": [] }, { "path": ["statement", "evidence_ids"], "value": [] }], "grounding": "unsupported" },
+    { "id": "zero-evidence", "set": [{ "path": ["context", "evidence"], "value": [] }, { "path": ["statement", "evidence_ids"], "value": [] }], "grounding": "unsupported" },
+    { "id": "single-source", "set": [{ "path": ["context", "claims", 1, "source"], "value": { "id": "source-a", "name": "Fixture A" } }], "grounding": "supported" },
+    { "id": "changed-number", "set": [{ "path": ["statement", "text"], "value": "Acme reported 101 jobs lost on 2026-10-01." }], "grounding": "needs_review" },
+    { "id": "attributed-template", "set": [{ "path": ["statement", "text"], "value": "Fixture A reports: Acme reported 100 jobs lost on 2026-10-01." }], "grounding": "supported" },
+    { "id": "identical-fingerprint", "grounding": "supported" },
+    { "id": "paraphrase", "set": [{ "path": ["statement", "text"], "value": "Acme lost one hundred jobs." }], "grounding": "needs_review" },
+    { "id": "audit-unavailable", "set": [{ "path": ["context", "evidence", 0, "source_grounded"], "value": null }], "grounding": "needs_review" },
+    { "id": "not-in-source", "set": [{ "path": ["context", "evidence", 0, "source_grounded"], "value": false }], "grounding": "unsupported" }
+  ]
+}

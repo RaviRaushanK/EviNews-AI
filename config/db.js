@@ -5,25 +5,28 @@
 
 const Sequelize = require('sequelize');
 
-// Check if required environment variables are set
-const useDatabase = (
-  process.env.DB_HOST &&
-  process.env.DB_USER &&
-  process.env.DB_PASSWORD &&
-  process.env.DB_NAME
-);
+const databaseConfigs = require('./database');
+const environment = process.env.NODE_ENV;
+if (!environment) {
+  throw new Error('NODE_ENV must be set to development, test, or production');
+}
+if (!Object.hasOwn(databaseConfigs, environment)) {
+  throw new Error(`Unsupported database environment: ${environment}`);
+}
+const config = databaseConfigs[environment];
+const useDatabase = config.host && config.username && config.password && config.database;
 
 let sequelize = null;
 
 if (useDatabase) {
   sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
+    config.database,
+    config.username,
+    config.password,
     {
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT) || 3306,
-      dialect: 'mysql',
+      host: config.host,
+      port: config.port,
+      dialect: config.dialect,
       dialectOptions: {
         connectTimeout: 5000,
         multipleStatements: true

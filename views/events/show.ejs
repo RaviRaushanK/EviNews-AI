@@ -1,0 +1,63 @@
+<%- include('_header', { title: data.event.title }) %>
+<a href="/events" class="back-link">Back to events</a>
+<h1 class="h3 mt-3"><%= data.event.title %></h1>
+<% if (data.event.description) { %><p><%= data.event.description %></p><% } %>
+<p class="report-meta"><span><%= presentation.formatDate(data.event.event_date) %></span><span><%= data.event.status || '' %></span></p>
+<nav class="nav nav-tabs mt-4 mb-4" aria-label="Event views">
+  <a class="nav-link <%= view === 'timeline' ? 'active' : '' %>" <%= view === 'timeline' ? 'aria-current=page' : '' %> href="/events/<%= encodeURIComponent(data.event.id) %>">Timeline</a>
+  <a class="nav-link <%= view === 'changes' ? 'active' : '' %>" <%= view === 'changes' ? 'aria-current=page' : '' %> href="/events/<%= encodeURIComponent(data.event.id) %>?view=changes">What Changed?</a>
+  <a class="nav-link" href="/events/<%= encodeURIComponent(data.event.id) %>/summary">Summary</a>
+</nav>
+<details class="coverage mb-4">
+  <summary>Coverage: <%= data.completeness && data.completeness.status || 'unknown' %></summary>
+  <ul class="mt-2"><% for (const warning of data.warnings || []) { %><li><%= warning.message || warning.code %></li><% } %></ul>
+  <% if (!data.warnings || !data.warnings.length) { %><p class="mb-0">No coverage warnings recorded.</p><% } %>
+</details>
+<% if (view === 'timeline') { %>
+  <h2 class="h5">Timeline <span class="text-muted">/ <%= data.count %> reports</span></h2>
+  <% if (!data.entries.length) { %><p class="empty-state">No reports available for this event.</p><% } %>
+  <% for (const group of data.groups) { %>
+    <section class="timeline-group" aria-label="<%= presentation.formatDate(group.report_timestamp) %>">
+      <h3 class="h6 timeline-time"><%= presentation.formatDate(group.report_timestamp) %><% if (group.tied) { %><span class="equal-time">Equal-time reports</span><% } %></h3>
+      <% for (const entry of group.entries) { const url = presentation.safeArticleUrl(entry.url); %>
+        <article class="report-item">
+          <div class="report-meta"><span><%= entry.source && entry.source.name || 'Source unavailable' %></span><span>Reported <%= presentation.formatDate(entry.report_timestamp) %></span><span><%= entry.date_source === 'fetched_at' ? 'Using fetched time' : entry.date_source === 'published_at' ? 'Publication time' : entry.date_source || 'Date unavailable' %></span></div>
+          <h4 class="h5 mt-2"><% if (url) { %><a href="<%= url %>" target="_blank" rel="noopener noreferrer"><%= entry.title %></a><% } else { %><%= entry.title %><% } %></h4>
+          <% if (entry.claims_status === 'empty') { %><p class="mt-3 mb-0">No claims were extracted from this report.</p><% } %>
+          <% if (entry.claims_status === 'unavailable') { %><p class="mt-3 mb-0">Claims are not available for this report.</p><% } %>
+          <details class="claim-details"><summary><%= entry.claim_count %> claims</summary>
+            <% for (const claim of entry.claims) { %>
+              <div class="claim-item"><p><%= claim.claim_text %></p><p class="report-meta"><span><%= claim.claim_type %></span><span>Confidence: <%= presentation.confidenceLabel(claim.confidence_score) %></span></p>
+                <%- include('_evidence', { evidence: claim.evidence, presentation }) %>
+              </div>
+            <% } %>
+          </details>
+        </article>
+      <% } %>
+    </section>
+  <% } %>
+<% } else { %>
+  <h2 class="h5">What Changed?</h2>
+  <form class="date-filters my-3" method="get" action="/events/<%= encodeURIComponent(data.event.id) %>">
+    <input type="hidden" name="view" value="changes">
+    <div><label for="since" class="form-label">After (UTC)</label><input id="since" class="form-control" name="since" value="<%= options.since || '' %>" placeholder="2026-10-01T00:00:00Z"></div>
+    <div><label for="until" class="form-label">Through (UTC)</label><input id="until" class="form-control" name="until" value="<%= options.until || '' %>" placeholder="2026-10-08T00:00:00Z"></div>
+    <button class="btn btn-primary" type="submit">Filter</button><a href="/events/<%= encodeURIComponent(data.event.id) %>?view=changes">Clear</a>
+  </form>
+  <p class="report-meta">Baseline: <%= data.baseline.since ? presentation.formatDate(data.baseline.since) : 'All earlier reports' %> / Through: <%= data.baseline.until ? presentation.formatDate(data.baseline.until) : 'Latest report' %></p>
+  <% if (!data.changes.length) { %><p class="empty-state">No changes available in this interval.</p><% } %>
+  <% for (const change of data.changes) { %>
+    <article class="change-item">
+      <span class="category category-<%= presentation.categoryClass(change.category) %>"><%= presentation.categoryLabel(change.category) %></span>
+      <p class="mt-2"><%= change.reason %></p>
+      <div class="comparison">
+        <section><h3 class="h6">Previous</h3><%- include('_report', { report: change.previous_report, presentation }) %><p class="mt-2"><%= change.previous_claim && change.previous_claim.claim_text || 'No earlier comparable claim.' %></p><%- include('_evidence', { evidence: change.previous_evidence, presentation }) %></section>
+        <section><h3 class="h6">Current</h3><%- include('_report', { report: change.current_report, presentation }) %><p class="mt-2"><%= change.current_claim && change.current_claim.claim_text || 'Claim unavailable.' %></p><%- include('_evidence', { evidence: change.evidence, presentation }) %></section>
+      </div>
+      <% for (const contradiction of change.stored_contradictions || (change.contradiction ? [change.contradiction] : [])) { %>
+        <div class="contradiction-detail"><h3 class="h6">Stored contradiction</h3><p><%= contradiction.contradiction_type || contradiction.outcome %> / <%= contradiction.status || 'Status unavailable' %></p><p><%= contradiction.reason %></p></div>
+      <% } %>
+    </article>
+  <% } %>
+<% } %>
+<%- include('_footer') %>

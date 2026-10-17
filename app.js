@@ -24,6 +24,8 @@ app.use(express.static('public'));
 // Routes
 const routes = require('./routes/index');
 app.use('/api', routes);
+app.use(require('./routes/events'));
+app.use(require('./routes/eventSummaries'));
 
 // Home route - renders the EJS home page
 app.get('/', (req, res) => {

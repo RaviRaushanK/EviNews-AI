@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "db:migrate": "sequelize db:migrate",
-    "db:migrate:undo": "sequelize db:migrate:undo",
+    "db:migrate": "sequelize db:migrate --env development",
+    "db:migrate:undo": "sequelize db:migrate:undo --env development",
     "collect:newsapi": "node scripts/collect-newsapi.js",
     "collect:rss": "node scripts/collect-rss.js",
     "process:articles": "node scripts/process-articles.js",
@@ -20,7 +20,20 @@
     "contradictions:detection:test": "node scripts/test-contradiction-detection.js",
     "contradictions:query:test": "node scripts/test-contradiction-query.js",
     "contradictions:controller:test": "node scripts/test-contradiction-controller.js",
-    "contradictions:evaluate": "node scripts/evaluate-contradictions.js"
+    "contradictions:evaluate": "node scripts/evaluate-contradictions.js",
+    "timeline:test": "node scripts/test-timeline-utils.js",
+    "changes:test": "node scripts/test-event-changes.js",
+    "timeline:service:test": "node scripts/test-timeline-service.js",
+    "changes:service:test": "node scripts/test-event-change-service.js",
+    "timeline:api:test": "node scripts/test-timeline-api.js",
+    "events:pages:test": "node scripts/test-event-pages.js",
+    "summaries:context:test": "node scripts/test-summary-context.js",
+    "summaries:validation:test": "node scripts/test-summary-validation.js",
+    "summaries:grounding:test": "node scripts/test-summary-grounding.js",
+    "summary:query:test": "node --test scripts/test-summary-query.js",
+    "summary:generation:test": "node --test scripts/test-summary-generation.js",
+    "summary:controller:test": "node --test scripts/test-summary-controller.js",
+    "summary:page:test": "node --test scripts/test-summary-page.js"
   },
   "dependencies": {
     "@google/genai": "^2.22.0",

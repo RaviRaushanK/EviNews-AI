@@ -1,0 +1,13 @@
+<% if (!evidence || !evidence.length) { %><p class="text-muted">No evidence available.</p><% } %>
+<% for (const item of evidence || []) { %>
+  <figure class="evidence">
+    <blockquote><%= item.evidence_text %></blockquote>
+    <figcaption class="text-muted">
+      <%= item.source && item.source.name || 'Source unavailable' %>
+      <% if (item.article && item.article.title) { %> / <%= item.article.title %><% } %>
+      <% const url = presentation.safeArticleUrl(item.article && item.article.url); if (url) { %>
+        <a href="<%= url %>" target="_blank" rel="noopener noreferrer">Original report</a>
+      <% } %>
+    </figcaption>
+  </figure>
+<% } %>

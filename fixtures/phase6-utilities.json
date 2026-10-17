@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "articles": [
+    { "id": "fixture-b", "title": "Second tied report", "source": { "id": "source-b", "name": "Fixture B" }, "published_at": "2026-10-01T10:00:00Z", "fetched_at": "2026-10-02T10:00:00Z" },
+    { "id": "fixture-a", "title": "First tied report", "source": { "id": "source-a", "name": "Fixture A" }, "published_at": "2026-10-01T15:30:00+05:30", "fetched_at": "2026-10-02T10:00:00Z" },
+    { "id": "fixture-fallback", "title": "Collection timestamp", "published_at": null, "fetched_at": "2026-10-02T10:00:00Z" },
+    { "id": "fixture-invalid", "title": "Unknown date", "published_at": "invalid", "fetched_at": "also invalid" }
+  ],
+  "claims": [
+    { "id": "fixture-claim", "claim_type": "fact", "claim_text": "The library opened.", "evidence": [{ "id": "fixture-evidence", "evidence_text": "The library opened.", "evidence_location": { "paragraph": 1 } }] }
+  ],
+  "comparisons": [
+    { "id": "repeat", "type": "fact", "before": "The library opened.", "after": "The library opened.", "category": "previously_reported" },
+    { "id": "punctuation", "type": "fact", "before": "The library opened.", "after": "  THE library   opened! ", "category": "previously_reported" },
+    { "id": "count", "type": "data", "before": "On 2026-10-01, Acme reported 100 people affected in North District.", "after": "On 2026-10-01, Acme reported 150 people affected in North District.", "category": "changed_value" },
+    { "id": "percent", "type": "data", "before": "On 2026-10-01, Acme reported 10% damage in North District.", "after": "On 2026-10-01, Acme reported 15% damage in North District.", "category": "changed_value" },
+    { "id": "money", "type": "data", "before": "On 2026-10-01, Acme damage was estimated at $2 million in North District.", "after": "On 2026-10-01, Acme damage was estimated at $3 million in North District.", "category": "changed_value" },
+    { "id": "unit", "type": "data", "before": "On 2026-10-01, Acme reported 100 workers affected in North District.", "after": "On 2026-10-01, Acme reported 150 people affected in North District.", "category": "unclassified" },
+    { "id": "entity", "type": "data", "before": "On 2026-10-01, Acme reported 100 people affected in North District.", "after": "On 2026-10-01, Beta reported 150 people affected in North District.", "category": "unclassified" },
+    { "id": "scope", "type": "data", "before": "On 2026-10-01, Acme reported 100 people affected in North District.", "after": "On 2026-10-01, Acme reported 150 people affected in South District.", "category": "unclassified" },
+    { "id": "reference-date", "type": "data", "before": "On 2026-10-01, Acme reported 100 people affected in North District.", "after": "On 2026-10-02, Acme reported 150 people affected in North District.", "category": "unclassified" },
+    { "id": "metric", "type": "data", "before": "On 2026-10-01, Acme reported 100 people affected in North District.", "after": "On 2026-10-01, Acme reported 150 people evacuated in North District.", "category": "unclassified" },
+    { "id": "negation", "type": "fact", "before": "The library opened.", "after": "The library did not open.", "category": "unclassified" },
+    { "id": "speaker", "type": "quote", "before": "Mayor Lee said the library opened.", "after": "Mayor Rao said the library opened.", "category": "unclassified" },
+    { "id": "paraphrase", "type": "fact", "before": "The city opened its new library on Saturday.", "after": "On Saturday, the city's new library opened to the public.", "category": "unclassified" },
+    { "id": "temporal", "type": "fact", "before": "The payment service was suspended on 2026-10-01.", "after": "The payment service resumed on 2026-10-02 after repairs.", "category": "updated_information" },
+    { "id": "same-date-state", "type": "fact", "before": "The payment service was suspended on 2026-10-01.", "after": "The payment service resumed on 2026-10-01 after repairs.", "category": "unclassified" },
+    { "id": "ambiguous-number", "type": "data", "before": "Acme reported 100 people affected.", "after": "Acme reported 150 people affected.", "category": "unclassified" },
+    { "id": "unrelated", "type": "fact", "before": "The library opened.", "after": "A satellite launched successfully.", "category": "new_information" },
+    { "id": "stored-direct", "type": "fact", "before": "The library opened.", "after": "The library stayed closed.", "category": "contradictory_information", "contradiction_type": "direct", "status": "unresolved" },
+    { "id": "stored-partial", "type": "data", "before": "Relief covers all states.", "after": "Relief covers only five states.", "category": "contradictory_information", "contradiction_type": "partial", "status": "under_review" },
+    { "id": "stored-temporal", "type": "fact", "before": "The service operated at noon.", "after": "The service was suspended at noon.", "category": "contradictory_information", "contradiction_type": "temporal", "status": "resolved" }
+  ]
+}

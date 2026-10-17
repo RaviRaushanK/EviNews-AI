@@ -33,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW,
       comment: 'When the summary was generated'
     },
+    prompt_version: { type: DataTypes.STRING(100), allowNull: true },
+    contract_version: { type: DataTypes.STRING(100), allowNull: true },
+    input_fingerprint: { type: DataTypes.CHAR(64), allowNull: true, validate: { is: /^[a-f0-9]{64}$/ } },
+    generation_status: { type: DataTypes.ENUM('pending', 'succeeded', 'failed'), allowNull: true },
+    grounding_status: { type: DataTypes.ENUM('supported', 'partially_supported', 'conflicting', 'unsupported', 'needs_review'), allowNull: false, defaultValue: 'needs_review' },
+    structured_output: { type: DataTypes.JSON, allowNull: true },
+    context_snapshot: { type: DataTypes.JSON, allowNull: true },
+    verification_metadata: { type: DataTypes.JSON, allowNull: true },
     verification_status: {
       type: DataTypes.ENUM('pending', 'verified', 'needs_review'),
       allowNull: false,
@@ -45,6 +53,8 @@ module.exports = (sequelize, DataTypes) => {
     underscored: false,
     comment: 'AI-generated event summaries',
     indexes: [
+      { name: 'idx_summaries_input_unique', fields: ['event_id', 'input_fingerprint'], unique: true },
+      { name: 'idx_summaries_grounding_status', fields: ['grounding_status'] },
       {
         name: 'idx_summaries_event_id',
         fields: ['event_id']

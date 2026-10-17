@@ -8,7 +8,47 @@
  */
 
 const { GoogleGenAI } = require('@google/genai');
+const diagnosticsChannel = require('node:diagnostics_channel').channel('evinews.gemini.generate.error');
 const claimsConfig = require('../config/claims');
+
+const ERROR_NAMES = new Set(['Error', 'TypeError', 'RangeError', 'ReferenceError', 'SyntaxError', 'AggregateError', 'AbortError', 'TimeoutError', 'ApiError', 'FetchError', 'DOMException']);
+const SYSCALLS = new Set(['getaddrinfo', 'connect', 'read', 'write', 'lookup', 'fetch']);
+const ERROR_CODES = new Set([
+  'GEMINI_KEY_MISSING', 'GEMINI_AUTH', 'GEMINI_BAD_REQUEST', 'GEMINI_RATE_LIMIT',
+  'GEMINI_SERVER', 'GEMINI_TIMEOUT', 'GEMINI_ERROR', 'GEMINI_EMPTY_RESPONSE',
+  'ECONNRESET', 'ECONNREFUSED', 'ECONNABORTED', 'EHOSTUNREACH', 'ENETUNREACH',
+  'ETIMEDOUT', 'EAI_AGAIN', 'ENOTFOUND', 'EPROTO', 'EPIPE', 'EACCES',
+  'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'UND_ERR_BODY_TIMEOUT',
+  'UND_ERR_SOCKET', 'UND_ERR_ABORTED', 'UND_ERR_RESPONSE_STATUS_CODE',
+  'ERR_TLS_CERT_ALTNAME_INVALID'
+]);
+
+function safeCode(value) {
+  return typeof value === 'string' && ERROR_CODES.has(value) ? value : undefined;
+}
+
+function safeErrorFields(error) {
+  if (!error || typeof error !== 'object') return {};
+  const fields = {};
+  if (ERROR_NAMES.has(error.name)) fields.name = error.name;
+  const code = safeCode(error.code);
+  if (code !== undefined) fields.code = code;
+  if (SYSCALLS.has(error.syscall)) fields.syscall = error.syscall;
+  const errno = Number.isSafeInteger(error.errno) ? error.errno : safeCode(error.errno);
+  if (errno !== undefined) fields.errno = errno;
+  if (Number.isInteger(error.status) && error.status >= 100 && error.status <= 599) fields.status = error.status;
+  const responseStatus = error.response && error.response.status;
+  if (Number.isInteger(responseStatus) && responseStatus >= 100 && responseStatus <= 599) fields.responseStatus = responseStatus;
+  return fields;
+}
+
+function publishErrorDiagnostic(error) {
+  if (!diagnosticsChannel.hasSubscribers) return;
+  const cause = error && error.cause;
+  const snapshot = { ...safeErrorFields(error), hasCause: cause != null };
+  if (cause != null) snapshot.cause = safeErrorFields(cause);
+  diagnosticsChannel.publish(snapshot);
+}
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -110,7 +150,7 @@ function withTimeout(promise, timeoutMs, label) {
  * Retries only rate-limit / server / timeout errors (max 5 attempts).
  *
  * @param {string} prompt
- * @param {object} options { model?, timeoutMs?, retryDelayMs?, maxAttempts? }
+ * @param {object} options { model?, timeoutMs?, retryDelayMs?, maxAttempts?, responseMimeType? }
  * @returns {Promise<{ text: string, model: string, attempts: number }>}
  */
 async function generateText(prompt, options = {}) {
@@ -130,11 +170,10 @@ async function generateText(prompt, options = {}) {
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
+      const request = { model, contents: String(prompt) };
+      if (options.responseMimeType) request.config = { responseMimeType: options.responseMimeType };
       const response = await withTimeout(
-        ai.models.generateContent({
-          model,
-          contents: String(prompt)
-        }),
+        ai.models.generateContent(request),
         timeoutMs,
         'Gemini generation'
       );
@@ -149,6 +188,7 @@ async function generateText(prompt, options = {}) {
       }
       return { text: String(text), model, attempts: attempt };
     } catch (error) {
+      publishErrorDiagnostic(error);
       lastError = classifyError(error);
       if (isFatal(lastError)) {
         throw lastError;

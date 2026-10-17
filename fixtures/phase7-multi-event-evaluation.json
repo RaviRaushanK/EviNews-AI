@@ -1,0 +1,94 @@
+{
+  "version": "phase7-multi-event-v1",
+  "schema_version": 1,
+  "kind": "synthetic-offline-evaluation",
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": ["version", "schema_version", "kind", "events", "articles", "claims", "evidence", "contradictions", "scenarios"],
+    "properties": {
+      "version": { "const": "phase7-multi-event-v1" },
+      "schema_version": { "const": 1 },
+      "kind": { "const": "synthetic-offline-evaluation" },
+      "events": { "type": "array", "minItems": 3 },
+      "articles": { "type": "array" },
+      "claims": { "type": "array" },
+      "evidence": { "type": "array" },
+      "contradictions": { "type": "array" },
+      "scenarios": { "type": "array", "minItems": 10 }
+    }
+  },
+  "upstream": "Articles, memberships, claims, evidence and contradiction annotations are synthetic test inputs, not collected news or live classifier results.",
+  "events": [
+    { "id": "81000000-0000-4000-8000-000000000001", "title": "Synthetic city library opening" },
+    { "id": "81000000-0000-4000-8000-000000000002", "title": "Synthetic North District disaster totals" },
+    { "id": "81000000-0000-4000-8000-000000000003", "title": "Synthetic payment service restoration" }
+  ],
+  "articles": [
+    { "id": "82000000-0000-4000-8000-000000000001", "event_id": "81000000-0000-4000-8000-000000000001", "title": "Synthetic library report A", "url": "https://fixture.invalid/library-a", "source": { "id": "fixture-source-a", "name": "Synthetic Independent A" }, "published_at": "2026-10-01T10:00:00Z", "processing_status": "claims_extracted", "content": "The city opened its new library." },
+    { "id": "82000000-0000-4000-8000-000000000002", "event_id": "81000000-0000-4000-8000-000000000001", "title": "Synthetic library report B", "url": "https://fixture.invalid/library-b", "source": { "id": "fixture-source-b", "name": "Synthetic Independent B" }, "published_at": "2026-10-01T11:00:00Z", "processing_status": "claims_extracted", "content": "The city opened its new library." },
+    { "id": "82000000-0000-4000-8000-000000000003", "event_id": "81000000-0000-4000-8000-000000000002", "title": "Synthetic disaster report A", "url": "https://fixture.invalid/disaster-a", "source": { "id": "fixture-source-c", "name": "Synthetic Independent C" }, "published_at": "2026-10-01T12:00:00Z", "processing_status": "claims_extracted", "content": "On 2026-10-01, Acme reported 100 people affected in North District." },
+    { "id": "82000000-0000-4000-8000-000000000004", "event_id": "81000000-0000-4000-8000-000000000002", "title": "Synthetic disaster report B", "url": "https://fixture.invalid/disaster-b", "source": { "id": "fixture-source-d", "name": "Synthetic Independent D" }, "published_at": "2026-10-01T13:00:00Z", "processing_status": "claims_extracted", "content": "On 2026-10-01, Acme reported 150 people affected in North District." },
+    { "id": "82000000-0000-4000-8000-000000000005", "event_id": "81000000-0000-4000-8000-000000000003", "title": "Synthetic outage report", "url": "https://fixture.invalid/service-a", "source": { "id": "fixture-source-e", "name": "Synthetic Service Desk" }, "published_at": "2026-10-01T14:00:00Z", "processing_status": "claims_extracted", "content": "The payment service was suspended on 2026-10-01." },
+    { "id": "82000000-0000-4000-8000-000000000006", "event_id": "81000000-0000-4000-8000-000000000003", "title": "Synthetic restoration report", "url": "https://fixture.invalid/service-b", "source": { "id": "fixture-source-e", "name": "Synthetic Service Desk" }, "published_at": "2026-10-02T14:00:00Z", "processing_status": "claims_extracted", "content": "The payment service resumed on 2026-10-02 after repairs." },
+    { "id": "82000000-0000-4000-8000-000000000007", "event_id": "81000000-0000-4000-8000-000000000003", "title": "Synthetic pending report", "url": "https://fixture.invalid/service-c", "source": { "id": "fixture-source-e", "name": "Synthetic Service Desk" }, "published_at": "2026-10-03T14:00:00Z", "processing_status": "clustered", "content": "Further reporting is pending." }
+  ],
+  "claims": [
+    { "id": "83000000-0000-4000-8000-000000000001", "article_id": "82000000-0000-4000-8000-000000000001", "claim_text": "The city opened its new library.", "claim_type": "fact" },
+    { "id": "83000000-0000-4000-8000-000000000002", "article_id": "82000000-0000-4000-8000-000000000002", "claim_text": "The city opened its new library.", "claim_type": "fact" },
+    { "id": "83000000-0000-4000-8000-000000000003", "article_id": "82000000-0000-4000-8000-000000000003", "claim_text": "On 2026-10-01, Acme reported 100 people affected in North District.", "claim_type": "data" },
+    { "id": "83000000-0000-4000-8000-000000000004", "article_id": "82000000-0000-4000-8000-000000000004", "claim_text": "On 2026-10-01, Acme reported 150 people affected in North District.", "claim_type": "data" },
+    { "id": "83000000-0000-4000-8000-000000000005", "article_id": "82000000-0000-4000-8000-000000000005", "claim_text": "The payment service was suspended on 2026-10-01.", "claim_type": "fact" },
+    { "id": "83000000-0000-4000-8000-000000000006", "article_id": "82000000-0000-4000-8000-000000000006", "claim_text": "The payment service resumed on 2026-10-02 after repairs.", "claim_type": "fact" }
+  ],
+  "evidence": [
+    { "id": "84000000-0000-4000-8000-000000000001", "claim_id": "83000000-0000-4000-8000-000000000001", "article_id": "82000000-0000-4000-8000-000000000001", "evidence_text": "The city opened its new library." },
+    { "id": "84000000-0000-4000-8000-000000000002", "claim_id": "83000000-0000-4000-8000-000000000002", "article_id": "82000000-0000-4000-8000-000000000002", "evidence_text": "The city opened its new library." },
+    { "id": "84000000-0000-4000-8000-000000000003", "claim_id": "83000000-0000-4000-8000-000000000003", "article_id": "82000000-0000-4000-8000-000000000003", "evidence_text": "On 2026-10-01, Acme reported 100 people affected in North District." },
+    { "id": "84000000-0000-4000-8000-000000000004", "claim_id": "83000000-0000-4000-8000-000000000004", "article_id": "82000000-0000-4000-8000-000000000004", "evidence_text": "On 2026-10-01, Acme reported 150 people affected in North District." },
+    { "id": "84000000-0000-4000-8000-000000000005", "claim_id": "83000000-0000-4000-8000-000000000005", "article_id": "82000000-0000-4000-8000-000000000005", "evidence_text": "The payment service was suspended on 2026-10-01." },
+    { "id": "84000000-0000-4000-8000-000000000006", "claim_id": "83000000-0000-4000-8000-000000000006", "article_id": "82000000-0000-4000-8000-000000000006", "evidence_text": "The payment service resumed on 2026-10-02 after repairs." }
+  ],
+  "contradictions": [
+    { "id": "85000000-0000-4000-8000-000000000001", "claim_id_1": "83000000-0000-4000-8000-000000000003", "claim_id_2": "83000000-0000-4000-8000-000000000004", "contradiction_type": "direct", "status": "under_review", "reason": "Synthetic annotation: reports disagree on the same district count and reference date." }
+  ],
+  "scenarios": [
+    { "id": "same-event-sources", "explanation": "Synthetic independent reports remain event-scoped; no clustering job is executed.", "cases": [
+      { "id": "separate-events", "action": "event_separation", "event_ids": ["81000000-0000-4000-8000-000000000001", "81000000-0000-4000-8000-000000000002", "81000000-0000-4000-8000-000000000003"], "expected": { "report_counts": [2, 2, 3], "leaked_references": 0 } },
+      { "id": "foreign-evidence", "action": "foreign_evidence", "event_id": "81000000-0000-4000-8000-000000000001", "expected": { "error": "SUMMARY_INVALID_EVIDENCE_REFERENCE" } }
+    ] },
+    { "id": "multi-source-support", "explanation": "Two exact excerpts retain separate source provenance, not a fused or verified claim.", "cases": [
+      { "id": "two-excerpts", "action": "multi_source", "event_id": "81000000-0000-4000-8000-000000000001", "expected": { "sources": 2, "statements": 2, "status": "generated", "basis": "source_excerpt" } }
+    ] },
+    { "id": "conflicting-facts", "explanation": "Existing candidate and change algorithms consume synthetic stored annotations; no classifier accuracy is asserted.", "cases": [
+      { "id": "conflicting-counts", "action": "conflict", "event_id": "81000000-0000-4000-8000-000000000002", "expected": { "candidate_pairs": 1, "category": "contradictory_information", "unannotated_category": "changed_value", "summary_status": "needs_review" } },
+      { "id": "reuse-phase5-labels", "action": "phase5_labels", "expected": { "cases": 31, "candidate_recall_min": 0.90 } }
+    ] },
+    { "id": "later-updates", "explanation": "Reuse unchanged Phase 6 labels for normal updates, changed values and stored conflicts.", "cases": [
+      { "id": "service-restoration", "action": "update", "event_id": "81000000-0000-4000-8000-000000000003", "expected": { "category": "updated_information", "contradictions": 0 } },
+      { "id": "reuse-phase6-labels", "action": "phase6_labels", "expected": { "comparisons": 20 } }
+    ] },
+    { "id": "incomplete-support", "explanation": "Single-source and pending extraction warnings stay outside statement text.", "cases": [
+      { "id": "pending-single-source", "action": "coverage", "event_id": "81000000-0000-4000-8000-000000000003", "expected": { "status": "partial", "warning_codes": ["SUMMARY_SINGLE_SOURCE", "CLAIMS_NOT_EXTRACTED", "SUMMARY_CONTRADICTION_COVERAGE_UNKNOWN"] } }
+    ] },
+    { "id": "unsupported-statements", "explanation": "Real generation/workflow validation rejects synthetic malformed or unsupported provider output before mock persistence.", "cases": [
+      { "id": "caveat-rejected", "action": "reject", "event_id": "81000000-0000-4000-8000-000000000001", "input": { "mutation": "caveat", "text": " (Evidence is single-source)." }, "expected": { "status": "needs_review", "writes": 0 } },
+      { "id": "paraphrase-rejected", "action": "reject", "event_id": "81000000-0000-4000-8000-000000000001", "input": { "mutation": "replace", "text": "Synthetic Independent A excerpt: A new library began operating." }, "expected": { "status": "needs_review", "writes": 0 } },
+      { "id": "wrong-claim-rejected", "action": "reject", "event_id": "81000000-0000-4000-8000-000000000001", "input": { "mutation": "wrong_claim" }, "expected": { "status": "failed", "writes": 0 } },
+      { "id": "cross-event-output-rejected", "action": "reject", "event_id": "81000000-0000-4000-8000-000000000001", "input": { "mutation": "foreign_claim", "claim_id": "83000000-0000-4000-8000-000000000003" }, "expected": { "status": "failed", "writes": 0 } }
+    ] },
+    { "id": "duplicates", "explanation": "Test existing hash/key semantics and candidate exclusion; collection and semantic deduplication are not simulated as production accuracy.", "cases": [
+      { "id": "duplicate-contract", "action": "duplicates", "event_id": "81000000-0000-4000-8000-000000000001", "input": { "alternate_url": "https://fixture.invalid/syndicated" }, "expected": { "candidate_pairs": 0, "same_url_hash": true, "different_url_content_hash": true } }
+    ] },
+    { "id": "unchanged-regeneration", "explanation": "Existing workflow/query services reuse fingerprints with an in-memory transactional repository.", "cases": [
+      { "id": "reuse-summary", "action": "idempotency", "event_id": "81000000-0000-4000-8000-000000000001", "expected": { "provider_calls": 1, "writes": 1, "summaries": 1, "links": 2 } }
+    ] },
+    { "id": "fingerprint-revisions", "explanation": "Material evidence/source/coverage changes invalidate inputs; equivalent order changes do not.", "cases": [
+      { "id": "revision-stability", "action": "fingerprints", "event_id": "81000000-0000-4000-8000-000000000001", "input": { "source_suffix": " Additional synthetic source context.", "warning": { "code": "FIXTURE_COVERAGE_CHANGED", "message": "Synthetic coverage revision." }, "evidence_text": "The city opened its new library today." }, "expected": { "reordered_equal": true, "source_changed": true, "coverage_changed": true, "evidence_changed": true } }
+    ] },
+    { "id": "provenance-not-truth", "explanation": "Exact provenance never implies factual verification; preserve legacy Phase 7 labels unchanged.", "cases": [
+      { "id": "provenance-boundary", "action": "provenance", "event_id": "81000000-0000-4000-8000-000000000001", "expected": { "basis": "source_excerpt", "factual_truth_verified": false, "verification_status": "needs_review", "invalid_provenance_status": "needs_review" } },
+      { "id": "reuse-phase7-labels", "action": "phase7_labels", "expected": { "cases": 23 } }
+    ] }
+  ]
+}

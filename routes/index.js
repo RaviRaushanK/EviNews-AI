@@ -7,6 +7,8 @@ const collectionController = require('../controllers/collectionController');
 const processingController = require('../controllers/processingController');
 const claimController = require('../controllers/claimController');
 const contradictionController = require('../controllers/contradictionController');
+const timelineController = require('../controllers/timelineController');
+const summaryController = require('../controllers/summaryController');
 
 const router = express.Router();
 
@@ -38,6 +40,13 @@ router.post('/events/:eventId/contradictions/detect', contradictionController.de
 router.get('/events/:eventId/contradictions', contradictionController.listForEvent);
 router.get('/claims/:claimId/contradictions', contradictionController.listForClaim);
 router.get('/claims/:claimId/contradiction-checks', contradictionController.listChecksForClaim);
+
+router.get('/events/:eventId/timeline', timelineController.getTimeline);
+router.get('/events/:eventId/changes', timelineController.getChanges);
+
+router.get('/events/:eventId/summaries', summaryController.listForEvent);
+router.get('/events/:eventId/summaries/:summaryId', summaryController.getForEvent);
+router.post('/events/:eventId/summaries/generate', summaryController.generateForEvent);
 
 module.exports = router;
 

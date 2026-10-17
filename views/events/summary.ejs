@@ -1,0 +1,80 @@
+<%- include('_header', { title: event.title + ' summary' }) %>
+<a href="/events" class="back-link">Back to events</a>
+<h1 class="h3 mt-3"><%= event.title %></h1>
+<p class="report-meta"><span><%= presentation.formatDate(event.event_date) %></span><span><%= event.status || '' %></span></p>
+<nav class="nav nav-tabs mt-4 mb-4" aria-label="Event views">
+  <a class="nav-link" href="/events/<%= encodeURIComponent(event.id) %>">Timeline</a>
+  <a class="nav-link" href="/events/<%= encodeURIComponent(event.id) %>?view=changes">What Changed?</a>
+  <a class="nav-link active" aria-current="page" href="/events/<%= encodeURIComponent(event.id) %>/summary">Summary</a>
+</nav>
+
+<div class="summary-toolbar">
+  <form method="post" action="/events/<%= encodeURIComponent(event.id) %>/summary/generate">
+    <button type="submit" class="btn btn-primary">Generate Summary</button>
+  </form>
+  <% if (summaries.length > 1) { %>
+    <form method="get" action="/events/<%= encodeURIComponent(event.id) %>/summary" class="summary-history">
+      <label class="form-label mb-0" for="summaryId">Saved version</label>
+      <select class="form-select form-select-sm" id="summaryId" name="summaryId" onchange="this.form.submit()">
+        <% for (const item of summaries) { %>
+          <option value="<%= item.id %>" <%= view && view.summary.id === item.id ? 'selected' : '' %>><%= presentation.formatDate(item.generated_at) %> / <%= item.model_version || 'Model unavailable' %></option>
+        <% } %>
+      </select>
+      <button type="submit" class="visually-hidden">Show version</button>
+    </form>
+  <% } %>
+</div>
+
+<% if (state) { %>
+  <div class="coverage mt-3" role="status">
+    <strong><%= state.code === 'SUMMARY_INSUFFICIENT_GROUNDING' ? 'Insufficient Evidence' : state.code === 'SUMMARY_NEEDS_REVIEW' ? 'Needs Review' : 'Generation Failed' %></strong>
+    <p class="mb-0"><%= state.message %></p>
+    <% if (state.findings && state.findings.length) { %>
+      <ul class="mt-2 mb-0"><% for (const finding of state.findings) { %><li><%= finding.statement_id %>: <%= finding.grounding_status %><% if (finding.failed_checks.length) { %> / <%= finding.failed_checks.join(', ') %><% } %><% if (finding.warnings.length) { %> / <%= finding.warnings.join(', ') %><% } %></li><% } %></ul>
+    <% } %>
+  </div>
+<% } %>
+
+<% if (!view) { %>
+  <p class="empty-state">No saved summary for this event.</p>
+<% } else { %>
+  <section class="summary-overview" aria-labelledby="summary-heading">
+    <div class="report-meta"><span><%= view.state %></span><span>Generated <%= presentation.formatDate(view.summary.generated_at) %></span><span><%= view.sourceCount %> source<%= view.sourceCount === 1 ? '' : 's' %></span><span>Model: <%= view.summary.model_version || 'Unavailable' %></span></div>
+    <h2 id="summary-heading" class="h5 mt-3">AI Summary</h2>
+    <p class="summary-text"><%= view.summary.summary_text %></p>
+    <p class="text-muted small">Grounded in available source evidence. This does not establish factual truth or source agreement.</p>
+    <p class="report-meta"><span>Grounding: <%= view.summary.grounding_status || 'unknown' %></span><span>Verification: <%= view.summary.verification_status === 'verified' ? 'Verification recorded' : 'Needs Review' %></span><span>Coverage: <%= view.coverage %></span><span>Contradiction checks: <%= view.contradictionCoverage %></span></p>
+  </section>
+
+  <details class="coverage my-4" <%= view.warnings.length || view.contradictionCoverage !== 'complete' ? 'open' : '' %>>
+    <summary>Coverage and limitations</summary>
+    <ul class="mt-2 mb-0">
+      <% for (const warning of view.warnings) { %><li><%= warning.message || warning.code %></li><% } %>
+      <% if (view.contradictionCoverage !== 'complete') { %><li>Stored contradiction results do not establish complete claim-pair coverage.</li><% } %>
+      <% if (view.sourceCount === 1) { %><li>Only one named source supports the summary context.</li><% } %>
+    </ul>
+  </details>
+
+  <section aria-labelledby="grounding-heading">
+    <h2 id="grounding-heading" class="h5">Claims and Evidence</h2>
+    <% if (!view.statements.length) { %><p class="empty-state">No statement-level grounding recorded.</p><% } %>
+    <% for (const item of view.statements) { %>
+      <article class="summary-statement">
+        <div class="report-meta"><span><%= item.id %></span><span>Grounding: <%= item.grounding_status %></span><span><%= item.attribution || 'Attribution unavailable' %></span></div>
+        <p class="summary-statement-text"><%= item.text %></p>
+        <% for (const claim of item.claims) { %><p class="mb-1"><strong>Claim:</strong> <%= claim.claim_text %></p><% } %>
+        <%- include('_evidence', { evidence: item.evidence, presentation }) %>
+        <% if (item.warnings.length) { %><ul class="small text-muted"><% for (const warning of item.warnings) { %><li><%= warning.message || warning.code %></li><% } %></ul><% } %>
+      </article>
+    <% } %>
+  </section>
+
+  <section class="mt-4" aria-labelledby="contradictions-heading">
+    <h2 id="contradictions-heading" class="h5">Stored Contradictions</h2>
+    <% if (!view.contradictions.length) { %><p class="text-muted">No stored relation is included in this snapshot; detection coverage may be unknown.</p><% } %>
+    <% for (const row of view.contradictions) { %>
+      <div class="contradiction-detail"><p class="report-meta"><span><%= row.contradiction_type %></span><span><%= row.status %></span></p><p><%= row.reason || 'Reason unavailable.' %></p></div>
+    <% } %>
+  </section>
+<% } %>
+<%- include('_footer') %>

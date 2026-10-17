@@ -1,0 +1,4 @@
+<% if (report) { const url = presentation.safeArticleUrl(report.url); %>
+  <p class="report-meta"><span><%= report.source && report.source.name || 'Source unavailable' %></span><span><%= presentation.formatDate(report.timestamp) %></span></p>
+  <% if (url) { %><a href="<%= url %>" target="_blank" rel="noopener noreferrer"><%= report.title || 'Original report' %></a><% } else { %><span><%= report.title || 'Report unavailable' %></span><% } %>
+<% } %>

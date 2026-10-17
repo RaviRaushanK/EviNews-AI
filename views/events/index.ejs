@@ -1,0 +1,16 @@
+<%- include('_header', { title: 'Events' }) %>
+<h1 class="h3 mb-4">Events</h1>
+<% if (!events.length) { %>
+  <p class="empty-state">No events available.</p>
+<% } %>
+<div class="event-list">
+  <% for (const event of events) { %>
+    <article class="event-list-item">
+      <h2 class="h5"><a href="/events/<%= encodeURIComponent(event.id) %>"><%= event.title %></a></h2>
+      <% if (event.description) { %><p><%= event.description %></p><% } %>
+      <div class="report-meta"><span><%= presentation.formatDate(event.event_date) %></span><span><%= event.article_count %> reports</span><span><%= event.status %></span></div>
+    </article>
+  <% } %>
+</div>
+<% if (events.length >= limit) { %><p class="text-muted mt-3">Showing the latest <%= limit %> events.</p><% } %>
+<%- include('_footer') %>
