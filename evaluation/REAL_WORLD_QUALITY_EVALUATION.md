@@ -50,6 +50,16 @@ means the declared artifact's review is structurally complete, not that its stag
 the final ten-event project or live evaluation have succeeded. A missing run for
 a declared event is rejected.
 
+For preparation, `validateReferenceArtifact` accepts exactly version, kind,
+complete, corpus, events and factual_truth_verified, without scope or runs. It
+returns the validated input, not a scoring report or success classification.
+Reference validation means only internally consistent, adjudicated annotations;
+it does not establish system quality, provider operation or factual truth. The
+shared reference validator is also used by full `validateArtifact`, which still
+requires scope and runs. Reference-only input is rejected by the scoring API and
+CLI. A dedicated preparation CLI remains future work; no placeholder executions
+are necessary or permitted to simulate scoring completion.
+
 An explicit `scope` contains `type` (component or end_to_end) and a nonempty,
 duplicate-free `required_stages` list. Supported stages are technical, schema,
 claims, evidence, summary, contradictions, timeline, changes, grounding, abstention
@@ -90,6 +100,16 @@ publication/occurrence dates are null. Collection and cutoff dates are required.
 Publication/collection cannot be after the assessment cutoff. The artifact's
 `complete` flag describes source availability; truncated sources must be labelled
 and their recall interpreted only for the supplied text.
+
+Source URLs are metadata, never fetch targets. A standard URL parser requires
+HTTPS, a hostname and no embedded username/password; ordinary .html paths, dots,
+query parameters and well-formed percent encodings are supported. Relative URLs,
+other schemes, control/whitespace/backslash repairs and malformed encodings are
+rejected. Original URL values are preserved, not rewritten. Synthetic examples
+remain confined to the fixture.invalid HTTPS origin. No DNS, sockets, provider
+or filesystem access occurs during URL/reference validation. URL validation does
+not establish that a source exists or grants access/storage permission. Query
+parameters must still be reviewed for sensitive values before artifact approval.
 
 Claims record report ID, proposition, type, attribution, modality, quantity/unit,
 location/reference period and an adjudicated equivalence group. Equivalent claims
@@ -206,6 +226,8 @@ not discover secrets or prove the supplied artifact is safe for publication.
 CLI input is a single relative .json path below fixtures/ or evaluation/corpora/.
 Absolute, traversal, URL, environment/credential-like paths and symlinked paths
 are rejected. Metadata paths below artifacts/ are validated but never opened.
+Local path validation is separate from source URL parsing and is unchanged;
+accepting HTTPS URL syntax never authorizes a URL as a local artifact path.
 The input limit is 1 MB; nesting/value counts and array lengths are bounded.
 Data accessors, hidden properties, symbols, sparse/custom arrays and unsupported
 objects are rejected. CLI output excludes text, URLs, paths and reviewer notes;

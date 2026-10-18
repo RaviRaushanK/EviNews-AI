@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const Module = require('node:module');
-const { validateArtifact, evaluateArtifact, safeArtifactPath } = require('../evaluation/realWorldQuality');
+const { validateReferenceArtifact, validateArtifact, evaluateArtifact, safeArtifactPath } = require('../evaluation/realWorldQuality');
 const { main, reportArtifact } = require('./evaluate-real-world-quality');
 const FILE = 'fixtures/real-world-quality-template.json';
 const fixture = () => JSON.parse(fs.readFileSync(path.join(__dirname, '..', FILE), 'utf8'));
@@ -369,3 +369,92 @@ test('fix 6: valid exact source offsets remain accepted', () => assert.doesNotTh
 for (const [name, values] of [['oversized end', { end: 1000000 }], ['negative start', { start: -1 }], ['end before start', { start: 20, end: 10 }], ['fractional start', { start: 0.5 }], ['fractional end', { end: 35.5 }], ['empty span', { start: 0, end: 0 }]]) {
   test('fix 6: rejects ' + name, () => { const data = fixture(); Object.assign(data.events[0].evidence[0], values); assert.throws(() => validateArtifact(data), { code: 'QUALITY_ARTIFACT_INVALID' }); });
 }
+
+function referenceArtifact() {
+  const data = fixture(); delete data.scope; delete data.runs; return data;
+}
+for (const url of [
+  'https://example.com/news/story',
+  'https://example.com/news/story.html',
+  'https://news.example.org/world/event?id=123&edition=local',
+  'https://example.com/a/b/story-name_2',
+  'https://example.com/a%20b/story%2Ehtml?topic=public%20transport',
+  'https://example.com/news/v1.2/story.html',
+  'https://example.com/%E0%A4%B8%E0%A4%AE%E0%A4%BE%E0%A4%9A%E0%A4%BE%E0%A4%B0'
+]) test('compatibility: HTTPS source URL is metadata only: ' + url, () => {
+  const data = referenceArtifact(); data.kind = 'human-labelled-local'; data.corpus.split = 'development'; data.events[0].reports[0].url = url;
+  assert.equal(validateReferenceArtifact(data), data); assert.equal(data.events[0].reports[0].url, url);
+  const scoring = fixture(); scoring.kind = data.kind; scoring.corpus.split = 'development'; scoring.events[0].reports[0].url = url;
+  assert.equal(evaluateArtifact(scoring).complete, true);
+});
+for (const [name, url] of [
+  ['HTTP', 'http://example.com/news'], ['file', 'file:///tmp/news.html'], ['FTP', 'ftp://example.com/news'],
+  ['JavaScript', 'javascript:neverExecute()'], ['data', 'data:text/plain,not-news'],
+  ['relative', '/news/story.html'], ['missing hostname', 'https://'], ['malformed host', 'https://[not-an-ip]/news'],
+  ['username', 'https://dummy-user@example.com/news'], ['password', 'https://:dummy-password@example.com/news'],
+  ['user and password', 'https://dummy-user:dummy-password@example.com/news'],
+  ['encoded username', 'https://dummy%75ser@example.com/news'], ['missing authority separator', 'https:example.com/news'],
+  ['backslash repair', 'https://example.com\\news'], ['whitespace repair', ' https://example.com/news'],
+  ['control character', 'https://example.com/\nnews'], ['invalid percent encoding', 'https://example.com/%ZZ']
+]) test('compatibility: reject ' + name + ' source URL without accessing it', () => {
+  const data = referenceArtifact(); data.kind = 'human-labelled-local'; data.corpus.split = 'development'; data.events[0].reports[0].url = url;
+  assert.throws(() => validateReferenceArtifact(data), { code: 'QUALITY_ARTIFACT_INVALID' });
+});
+test('compatibility: synthetic URLs remain confined to fixture.invalid', () => {
+  const data = referenceArtifact(); data.events[0].reports[0].url = 'https://fixture.invalid.example.com/a';
+  assert.throws(() => validateReferenceArtifact(data));
+});
+test('compatibility: valid reference-only data needs no scope, runs or generated output', () => {
+  const data = referenceArtifact(); assert.equal(validateReferenceArtifact(data), data);
+  assert.equal(Object.hasOwn(data, 'runs'), false); assert.equal(Object.hasOwn(data, 'scope'), false);
+  for (const key of ['evaluation_success', 'minimum_checks_pass', 'end_to_end_complete']) assert.equal(Object.hasOwn(data, key), false);
+  assert.equal(data.factual_truth_verified, false);
+});
+test('compatibility: reference-only validation cannot become successful scoring', () => {
+  const data = referenceArtifact(); validateReferenceArtifact(data);
+  assert.throws(() => validateArtifact(data)); assert.throws(() => evaluateArtifact(data));
+  const result = reportArtifact(data); assert.equal(result.exitCode, 1); assert.equal(result.complete, false);
+});
+test('compatibility: reference API rejects scoring fields rather than hiding them', () => {
+  assert.throws(() => validateReferenceArtifact(fixture()));
+});
+for (const [name, mutate] of [
+  ['missing corpus', data => { delete data.corpus; }],
+  ['missing reference claim', data => { data.events[0].claims = data.events[0].claims.filter(row => row.id !== 'claim-a'); }],
+  ['orphan evidence', data => { data.events[0].evidence[0].claim_id = 'missing'; }],
+  ['cross-report evidence', data => { data.events[0].evidence[0].report_id = 'report-b'; }],
+  ['invalid evidence offset', data => { data.events[0].evidence[0].end = 1000000; }],
+  ['source hash mismatch', data => { data.events[0].reports[0].text += ' Modified.'; }],
+  ['missing required summary reference', data => { data.events[0].required_summary_facts.push('missing'); }],
+  ['duplicate event ID', data => { data.events.push(structuredClone(data.events[0])); }],
+  ['conflicting claim group', data => { data.events[0].claims[5].equivalence_group = 'wrong-group'; }],
+  ['conflicting relation duplicate', data => { const row = data.events[0].relations[3]; data.events[0].relations.push({ ...row, id: 'inconsistent-copy', classification: 'partial' }); }],
+  ['unresolved adjudication', data => { data.events[0].review.status = 'unresolved'; }],
+  ['factual truth', data => { data.factual_truth_verified = true; }],
+  ['unsafe artifact path', data => { data.events[0].reports[0].artifact.path = 'https://example.com/a.html'; }],
+  ['Windows traversal', data => { data.events[0].reports[0].artifact.path = 'artifacts/..\\secret.txt'; }],
+  ['UNC path', data => { data.events[0].reports[0].artifact.path = '\\\\server\\share\\story.txt'; }],
+  ['encoded local traversal', data => { data.events[0].reports[0].artifact.path = 'artifacts/%2e%2e/story.txt'; }]
+]) test('compatibility: reference-only validation rejects ' + name, () => {
+  const data = referenceArtifact(); mutate(data); assert.throws(() => validateReferenceArtifact(data), { code: 'QUALITY_ARTIFACT_INVALID' });
+});
+test('compatibility: missing scoped observations still fail full evaluation after shared reference validation', () => {
+  const data = fixture(); unavailable(data); const report = reportArtifact(data);
+  assert.equal(report.evaluation_success, false); assert.equal(report.complete, false); assert.equal(report.exitCode, 1);
+});
+test('compatibility: reference URL validation initializes only crypto and performs zero I/O', () => {
+  const data = referenceArtifact(); data.kind = 'human-labelled-local'; data.corpus.split = 'development'; data.events[0].reports[0].url = 'https://example.com/news/story.html?id=123';
+  const target = require.resolve('../evaluation/realWorldQuality'), cached = require.cache[target], load = Module._load, read = fs.readFileSync;
+  const seen = []; let reads = 0;
+  try {
+    delete require.cache[target];
+    Module._load = function (name, parent, isMain) {
+      if (parent?.filename === target) { seen.push(name); assert.equal(name, 'node:crypto'); }
+      return load.call(this, name, parent, isMain);
+    };
+    const pure = require(target);
+    fs.readFileSync = () => { reads++; throw new Error('Reference validation must not read files'); };
+    const result = pure.validateReferenceArtifact(data);
+    assert.equal(result, data); assert.equal(reads, 0); assert.deepEqual(seen, ['node:crypto']);
+  } finally { fs.readFileSync = read; Module._load = load; require.cache[target] = cached; }
+});

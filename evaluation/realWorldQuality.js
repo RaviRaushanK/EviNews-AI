@@ -37,6 +37,14 @@ function safeArtifactPath(value) {
   check(!value.split('/').some(part => !part || part === '..' || /(?:^\.|env|secret|credential|password|token|private)/i.test(part)));
   return value;
 }
+function validateSourceUrl(value) {
+  check(typeof value === 'string' && value.length <= 4096 && /^https:\/\//i.test(value));
+  check(!/[\\\u0000-\u0020\u007f]/.test(value) && !/%(?![a-f0-9]{2})/i.test(value));
+  let parsed;
+  try { parsed = new URL(value); } catch (_) { invalid(); }
+  check(parsed.protocol === 'https:' && parsed.hostname.length > 0 && !parsed.username && !parsed.password);
+  return parsed; // Metadata only: URL parsing does not resolve or fetch the host.
+}
 // Reject representations that JSON canonicalization could silently omit or execute.
 function jsonData(value, depth = 0, budget = { count: 0 }) {
   check(depth <= 40 && ++budget.count <= 50000);
@@ -94,17 +102,11 @@ function evidenceObservations(run, event) {
   }, row => ({ excerpt: row.excerpt, human_support: row.human_support }));
 }
 
-function validateArtifact(input) {
-  jsonData(input); check(Buffer.byteLength(canonical(input)) <= 1000000);
-  fields(input, ['version', 'kind', 'complete', 'scope', 'corpus', 'events', 'runs', 'factual_truth_verified']);
+function validateReferenceData(input) {
   check(input.version === VERSION && ['synthetic', 'human-labelled-local'].includes(input.kind) && input.complete === true && input.factual_truth_verified === false);
   fields(input.corpus, ['id', 'version', 'split', 'storage_approval', 'notes']); id(input.corpus.id); id(input.corpus.version);
   check(['development', 'assessment', 'synthetic'].includes(input.corpus.split)); text(input.corpus.storage_approval); text(input.corpus.notes);
   check(input.kind !== 'synthetic' || input.corpus.split === 'synthetic');
-  fields(input.scope, ['type', 'required_stages']); check(['component', 'end_to_end'].includes(input.scope.type));
-  list(input.scope.required_stages); unique(input.scope.required_stages); check(input.scope.required_stages.length > 0);
-  check(input.scope.required_stages.every(stage => Object.hasOwn(STAGE_METRICS, stage)));
-  if (input.scope.type === 'end_to_end') check(input.scope.required_stages.length === Object.keys(STAGE_METRICS).length);
   const events = ids(input.events); check(events.size > 0 && events.size <= 12);
   const globalIds = new Set();
   function register(rows) { for (const row of rows) { check(!globalIds.has(row.id)); globalIds.add(row.id); } }
@@ -118,8 +120,8 @@ function validateArtifact(input) {
       fields(report, ['id', 'source_id', 'publisher_id', 'origin_group', 'independence_confidence', 'url', 'published_at', 'collected_at', 'occurred_at', 'time_uncertain', 'date_fallback', 'artifact', 'text']);
       id(report.source_id); id(report.publisher_id); id(report.origin_group);
       check(['confirmed', 'uncertain', 'unknown'].includes(report.independence_confidence));
-      check(typeof report.url === 'string' && /^https:\/\/[a-zA-Z0-9.-]+\/[a-zA-Z0-9_/-]*$/.test(report.url));
-      if (input.kind === 'synthetic') check(report.url.startsWith('https://fixture.invalid/'));
+      const sourceUrl = validateSourceUrl(report.url);
+      if (input.kind === 'synthetic') check(sourceUrl.origin === 'https://fixture.invalid');
       timestamp(report.published_at, true); timestamp(report.collected_at); timestamp(report.occurred_at, true);
       check(Date.parse(report.collected_at) <= Date.parse(event.assessment_cutoff) && (!report.published_at || Date.parse(report.published_at) <= Date.parse(event.assessment_cutoff)));
       bool(report.time_uncertain); bool(report.date_fallback); check(report.date_fallback === (report.published_at === null));
@@ -158,6 +160,22 @@ function validateArtifact(input) {
     check(!event.required_summary_facts.some(value => event.optional_facts.includes(value)));
     list(event.prohibited_settled_assertions).forEach(text);
   }
+  return { events, globalIds };
+}
+function validateReferenceArtifact(input) {
+  jsonData(input); check(Buffer.byteLength(canonical(input)) <= 1000000);
+  fields(input, ['version', 'kind', 'complete', 'corpus', 'events', 'factual_truth_verified']);
+  validateReferenceData(input);
+  return input;
+}
+function validateArtifact(input) {
+  jsonData(input); check(Buffer.byteLength(canonical(input)) <= 1000000);
+  fields(input, ['version', 'kind', 'complete', 'scope', 'corpus', 'events', 'runs', 'factual_truth_verified']);
+  const { events, globalIds } = validateReferenceData(input);
+  fields(input.scope, ['type', 'required_stages']); check(['component', 'end_to_end'].includes(input.scope.type));
+  list(input.scope.required_stages); unique(input.scope.required_stages); check(input.scope.required_stages.length > 0);
+  check(input.scope.required_stages.every(stage => Object.hasOwn(STAGE_METRICS, stage)));
+  if (input.scope.type === 'end_to_end') check(input.scope.required_stages.length === Object.keys(STAGE_METRICS).length);
   ids(input.runs); check(input.runs.length > 0 && input.runs.length <= 24);
   for (const run of input.runs) {
     fields(run, ['id', 'event_id', 'status', 'schema_valid', 'summary_status', 'claims', 'evidence', 'statements', 'candidate_relation_ids', 'classifications', 'disclosed_relation_ids', 'timeline', 'changes', 'grounding_trials', 'idempotency_trials', 'warnings', 'factual_truth_verified', 'review']);
@@ -310,4 +328,4 @@ function evaluateArtifact(input) {
     factual_truth_verified: false, minimum_checks_pass: minimumChecks, evaluation_success: minimumChecks,
     runs, limitations: ['Human semantic annotations are inputs, not independently established facts.', 'No provider, database, collection or native execution is performed.', 'Idempotency observations are artifact labels, not database concurrency verification.'] };
 }
-module.exports = { VERSION, safeArtifactPath, validateArtifact, evaluateArtifact };
+module.exports = { VERSION, safeArtifactPath, validateReferenceArtifact, validateArtifact, evaluateArtifact };
