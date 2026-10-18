@@ -1,0 +1,65 @@
+{
+  "version": "8w-quality-v1",
+  "kind": "synthetic",
+  "complete": true,
+  "scope": {"type":"end_to_end","required_stages":["technical","schema","claims","evidence","summary","contradictions","timeline","changes","grounding","abstention","idempotency"]},
+  "factual_truth_verified": false,
+  "corpus": {
+    "id": "synthetic-example", "version": "v1", "split": "synthetic",
+    "storage_approval": "Invented text only; not a collected news corpus.",
+    "notes": "Illustrates annotation structures; does not claim ten-event or real-world evaluation completion."
+  },
+  "events": [{
+    "id": "event-hall", "scenario": "C", "assessment_cutoff": "2026-01-03T00:00:00Z",
+    "reports": [
+      {"id":"report-a","source_id":"source-a","publisher_id":"publisher-a","origin_group":"origin-wire","independence_confidence":"confirmed","url":"https://fixture.invalid/a","published_at":"2026-01-01T10:00:00Z","collected_at":"2026-01-01T11:00:00Z","occurred_at":null,"time_uncertain":false,"date_fallback":false,"artifact":{"path":"artifacts/report-a.txt","sha256":"52352a1ae951a116164850f64e48f9d8cb22e5c1c67345317fda084322bd9bfc","complete":true},"text":"The fictional hall closed on Monday."},
+      {"id":"report-b","source_id":"source-b","publisher_id":"publisher-b","origin_group":"origin-wire","independence_confidence":"confirmed","url":"https://fixture.invalid/b","published_at":"2026-01-02T10:00:00Z","collected_at":"2026-01-02T11:00:00Z","occurred_at":null,"time_uncertain":false,"date_fallback":false,"artifact":{"path":"artifacts/report-b.txt","sha256":"56237b5a8c6e7e6cca57e08e7bfb5a804fdd95b32604c47d4b7154a307698bdf","complete":true},"text":"The fictional hall reopened on Tuesday."},
+      {"id":"report-c","source_id":"source-c","publisher_id":"publisher-c","origin_group":"origin-local","independence_confidence":"unknown","url":"https://fixture.invalid/c","published_at":null,"collected_at":"2026-01-02T12:00:00Z","occurred_at":null,"time_uncertain":true,"date_fallback":true,"artifact":{"path":"artifacts/report-c.txt","sha256":"638ad4e5517c2c5d5528e447137ef74e106f3785c50760496dfc544576581a59","complete":true},"text":"The fictional hall holds 30 people. A rival notice says 40 people. An earlier notice of 20 people was corrected to 30."}
+    ],
+    "claims": [
+      {"id":"claim-a","report_id":"report-a","text":"The fictional hall closed on Monday.","type":"fact","attribution":"publisher-a","modality":"reported","quantity":null,"unit":null,"location":"fictional hall","reference_period":"Monday","equivalence_group":"fact-closure"},
+      {"id":"claim-b","report_id":"report-b","text":"The fictional hall reopened on Tuesday.","type":"fact","attribution":"publisher-b","modality":"reported","quantity":null,"unit":null,"location":"fictional hall","reference_period":"Tuesday","equivalence_group":"fact-reopening"},
+      {"id":"claim-c","report_id":"report-c","text":"The fictional hall holds 30 people.","type":"data","attribution":"publisher-c","modality":"reported","quantity":30,"unit":"people","location":"fictional hall","reference_period":null,"equivalence_group":"fact-capacity"},
+      {"id":"claim-d","report_id":"report-c","text":"A rival notice says 40 people.","type":"data","attribution":"rival-notice","modality":"disputed","quantity":40,"unit":"people","location":"fictional hall","reference_period":null,"equivalence_group":"fact-rival-capacity"},
+      {"id":"claim-e","report_id":"report-c","text":"An earlier notice of 20 people was corrected to 30.","type":"data","attribution":"earlier-notice","modality":"superseded","quantity":20,"unit":"people","location":"fictional hall","reference_period":"earlier","equivalence_group":"fact-earlier-capacity"},
+      {"id":"claim-a-repeat","report_id":"report-a","text":"The fictional hall closed on Monday.","type":"fact","attribution":"publisher-a","modality":"reported","quantity":null,"unit":null,"location":"fictional hall","reference_period":"Monday","equivalence_group":"fact-closure"}
+    ],
+    "evidence": [
+      {"id":"evidence-a","claim_id":"claim-a","report_id":"report-a","excerpt":"The fictional hall closed on Monday.","start":0,"end":36,"relationship":"support"},
+      {"id":"evidence-b","claim_id":"claim-b","report_id":"report-b","excerpt":"The fictional hall reopened on Tuesday.","start":0,"end":39,"relationship":"support"},
+      {"id":"evidence-c","claim_id":"claim-c","report_id":"report-c","excerpt":"The fictional hall holds 30 people.","start":0,"end":35,"relationship":"insufficient"},
+      {"id":"evidence-disputed","claim_id":"claim-c","report_id":"report-c","excerpt":"A rival notice says 40 people.","start":36,"end":66,"relationship":"contradict"}
+    ],
+    "relations": [
+      {"id":"relation-update","claim_ids":["claim-a","claim-b"],"kind":"normal_update","classification":"none","required_disclosure":false,"resolution":"resolved","notes":"Different reference times; not simultaneous conflicting states."},
+      {"id":"relation-ambiguous","claim_ids":["claim-b","claim-c"],"kind":"ambiguous","classification":null,"required_disclosure":false,"resolution":"excluded","notes":"No established relationship; excluded from contradiction labels."},
+      {"id":"relation-equivalent","claim_ids":["claim-a","claim-a-repeat"],"kind":"equivalent","classification":"none","required_disclosure":false,"resolution":"resolved","notes":"Repeated reference representation shares one recall group."},
+      {"id":"relation-conflict","claim_ids":["claim-c","claim-d"],"kind":"conflict","classification":"direct","required_disclosure":true,"resolution":"resolved","notes":"Current reported capacities conflict; must not be settled by publisher agreement."},
+      {"id":"relation-correction","claim_ids":["claim-e","claim-c"],"kind":"correction","classification":"none","required_disclosure":false,"resolution":"resolved","notes":"Explicit earlier-to-corrected notice; not a simultaneous contradiction."}
+    ],
+    "changes":[{"id":"change-reopening","current_claim_id":"claim-b","previous_claim_id":"claim-a","category":"updated_information"}],
+    "required_summary_facts":["claim-a","claim-b"], "optional_facts":[],
+    "prohibited_settled_assertions":["The fictional hall was open throughout Monday."],
+    "expected_abstention":false,
+    "review":{"status":"resolved","reviewers":["reviewer-one","reviewer-two"],"adjudicator":"reviewer-three","notes":"Synthetic example only. Relations also support equivalent, conflict and correction kinds; evidence supports support, contradict and insufficient labels."}
+  }],
+  "runs":[{
+    "id":"run-example", "event_id":"event-hall", "status":"completed", "schema_valid":true,"summary_status":"accepted","factual_truth_verified":false,
+    "claims":[
+      {"id":"output-claim-a","reference_claim_id":"claim-a","supported":true,"attribution_correct":true},
+      {"id":"output-claim-b","reference_claim_id":"claim-b","supported":true,"attribution_correct":true}
+    ],
+    "evidence":[{"id":"output-evidence-a","claim_output_id":"output-claim-a","reference_evidence_id":"evidence-a","report_id":"report-a","excerpt":"The fictional hall closed on Monday.","human_support":"support"}],
+    "statements":[
+      {"id":"statement-a","text":"publisher-a excerpt: The fictional hall closed on Monday.","reference_claim_ids":["claim-a"],"evidence_ids":["evidence-a"],"claim_support":[{"claim_id":"claim-a","evidence_ids":["evidence-a"],"support":"support"}],"support":"support","attribution_correct":true,"proposition_group":"fact-closure"},
+      {"id":"statement-b","text":"publisher-b excerpt: The fictional hall reopened on Tuesday.","reference_claim_ids":["claim-b"],"evidence_ids":["evidence-b"],"claim_support":[{"claim_id":"claim-b","evidence_ids":["evidence-b"],"support":"support"}],"support":"support","attribution_correct":true,"proposition_group":"fact-reopening"}
+    ],
+    "candidate_relation_ids":[], "classifications":[{"id":"classification-update","relation_id":"relation-update","classification":"none"}],"disclosed_relation_ids":[],
+    "timeline":["report-a","report-b","report-c"],
+    "changes":[{"id":"output-change","reference_change_id":"change-reopening","category":"updated_information"}],
+    "grounding_trials":[{"id":"trial-supported","expected_accept":true,"actual_accept":true,"adversarial":false},{"id":"trial-unsupported","expected_accept":false,"actual_accept":false,"adversarial":true}],
+    "idempotency_trials":[{"id":"repeat-one","same_input":true,"same_output":true,"extra_dispatches":0}],
+    "warnings":[{"code":"INCOMPLETE_COVERAGE","details":{"unknown_source_independence":true}}],
+    "review":{"status":"resolved","reviewers":["reviewer-one","reviewer-two"],"adjudicator":"reviewer-three","notes":"All output support decisions are synthetic human-label examples, not results of generation."}
+  }]
+}

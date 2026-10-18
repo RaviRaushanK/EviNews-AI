@@ -534,3 +534,9 @@ explicit model/snapshot approval) one authenticated test. Current external
 connectivity, actual Gemini response/model compatibility, real IPC/TTY behavior,
 external cancellation and live readiness are NOT VERIFIED. The Step 8R task
 authorizes none of those live operations.
+
+# Offline quality protocol (Step 8W-A)
+
+See [REAL_WORLD_QUALITY_EVALUATION.md](REAL_WORLD_QUALITY_EVALUATION.md) for
+artifact-only reference scoring. This does not clear the real-process or live
+execution gate, and evidence grounding never establishes factual truth.
