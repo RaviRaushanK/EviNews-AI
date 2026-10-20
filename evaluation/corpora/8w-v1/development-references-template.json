@@ -1,0 +1,14 @@
+[
+  {
+    "event_id": "template-dev",
+    "sources": [{"report_id":"template-report-dev","text":"The fictional hall closed on Monday."}],
+    "claims": [{
+      "id":"template-claim-dev","report_id":"template-report-dev","proposition":"The fictional hall closed on Monday.","type":"fact",
+      "equivalence_group":"template-group-dev","attribution":"Synthetic Publisher D","modality":"reported","quantity":null,"unit":null,
+      "location":"fictional hall","relevant_time":"Monday","scope":"Closure of the fictional hall only.","uncertainty":"none","review_state":"provisional"
+    }],
+    "evidence": [{"id":"template-evidence-dev","claim_id":"template-claim-dev","report_id":"template-report-dev","excerpt":"The fictional hall closed on Monday.","start":0,"end":36,"relationship":"support"}],
+    "relations": [], "changes": [],
+    "summary": {"required_groups":["template-group-dev"],"optional_groups":[],"prohibited_settled_assertions":["The fictional hall remained open on Monday."],"expected_abstention":false,"abstention_rationale":"Synthetic source support is available.","salience_notes":"Example only, not a gold summary or human quality result."}
+  }
+]

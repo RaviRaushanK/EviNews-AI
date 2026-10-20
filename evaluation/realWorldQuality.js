@@ -95,10 +95,24 @@ function deduplicate(rows, identity, annotation) {
 function referenceRelations(event) {
   return deduplicate(event.relations, row => relationIdentity(row, event), row => ({ kind: row.kind, classification: row.classification, required_disclosure: row.required_disclosure, resolution: row.resolution }));
 }
+function evidenceIdentity(row, event) {
+  return canonical([claimIdentity(event.claims.find(claim => claim.id === row.claim_id)), row.report_id, row.start, row.end, row.excerpt]);
+}
+function referenceEvidence(event) {
+  return deduplicate([...event.evidence].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
+    row => evidenceIdentity(row, event), row => row.relationship);
+}
+function validateRelationGroups(row, claims) {
+  const [a, b] = row.claim_ids.map(value => claims.get(value));
+  if (row.kind === 'equivalent') check(a.equivalence_group === b.equivalence_group);
+  if (row.kind === 'conflict' && ['direct', 'temporal'].includes(row.classification) && row.resolution !== 'excluded') {
+    check(a.equivalence_group !== b.equivalence_group);
+  }
+}
 function evidenceObservations(run, event) {
   return deduplicate(run.evidence, row => {
     const ref = event.evidence.find(item => item.id === row.reference_evidence_id);
-    return canonical([claimIdentity(event.claims.find(claim => claim.id === ref.claim_id)), ref.report_id, ref.start, ref.end]);
+    return evidenceIdentity(ref, event);
   }, row => ({ excerpt: row.excerpt, human_support: row.human_support }));
 }
 
@@ -145,6 +159,7 @@ function validateReferenceData(input) {
       check(['support', 'contradict', 'insufficient'].includes(row.relationship)); text(row.excerpt);
       check(Number.isSafeInteger(row.start) && Number.isSafeInteger(row.end) && row.start >= 0 && row.end > row.start && row.end <= reports.get(row.report_id).text.length && reports.get(row.report_id).text.slice(row.start, row.end) === row.excerpt);
     }
+    referenceEvidence(event);
     for (const row of event.relations) {
       fields(row, ['id', 'claim_ids', 'kind', 'classification', 'required_disclosure', 'resolution', 'notes']);
       refs(row.claim_ids, claims); check(row.claim_ids.length === 2);
@@ -153,6 +168,7 @@ function validateReferenceData(input) {
       check(['resolved', 'excluded'].includes(row.resolution));
       check(row.kind === 'ambiguous' ? row.resolution === 'excluded' && row.classification === null && !row.required_disclosure : row.resolution === 'resolved' && CLASSES.includes(row.classification));
       check(row.kind === 'conflict' ? row.classification !== 'none' : row.classification === 'none' || row.kind === 'ambiguous');
+      validateRelationGroups(row, claims);
     }
     referenceRelations(event);
     for (const row of event.changes) { fields(row, ['id', 'current_claim_id', 'previous_claim_id', 'category']); check(claims.has(row.current_claim_id) && claims.has(row.previous_claim_id)); check(CHANGES.includes(row.category)); }
@@ -328,4 +344,4 @@ function evaluateArtifact(input) {
     factual_truth_verified: false, minimum_checks_pass: minimumChecks, evaluation_success: minimumChecks,
     runs, limitations: ['Human semantic annotations are inputs, not independently established facts.', 'No provider, database, collection or native execution is performed.', 'Idempotency observations are artifact labels, not database concurrency verification.'] };
 }
-module.exports = { VERSION, safeArtifactPath, validateReferenceArtifact, validateArtifact, evaluateArtifact };
+module.exports = { VERSION, safeArtifactPath, validateReferenceArtifact, validateArtifact, evaluateArtifact, referenceEvidence, validateRelationGroups };

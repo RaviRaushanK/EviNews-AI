@@ -1,0 +1,6 @@
+[
+  {"id":"template-review-dev-a","event_id":"template-dev","role":"A","reviewer_id":"template-reviewer-a","state":"pending","reference_fingerprint":null,"annotations":[],"notes":"Synthetic placeholder. Independent annotation has NOT occurred."},
+  {"id":"template-review-dev-b","event_id":"template-dev","role":"B","reviewer_id":"template-reviewer-b","state":"pending","reference_fingerprint":null,"annotations":[],"notes":"Synthetic placeholder. Independent second review has NOT occurred."},
+  {"id":"template-review-assessment-a","event_id":"template-assessment","role":"A","reviewer_id":"template-reviewer-a","state":"pending","reference_fingerprint":null,"annotations":[],"notes":"Synthetic placeholder. No real human review."},
+  {"id":"template-review-assessment-b","event_id":"template-assessment","role":"B","reviewer_id":"template-reviewer-b","state":"pending","reference_fingerprint":null,"annotations":[],"notes":"Synthetic placeholder. No real human review."}
+]

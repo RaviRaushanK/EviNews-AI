@@ -458,3 +458,70 @@ test('compatibility: reference URL validation initializes only crypto and perfor
     assert.equal(result, data); assert.equal(reads, 0); assert.deepEqual(seen, ['node:crypto']);
   } finally { fs.readFileSync = read; Module._load = load; require.cache[target] = cached; }
 });
+
+for (const [first, second] of [['support','contradict'], ['support','insufficient'], ['contradict','insufficient']]) {
+  for (const aliasClaim of [false, true]) test('corpus defense: conflicting reference evidence ' + first + '/' + second + ', claim alias=' + aliasClaim, () => {
+    const data = fixture(), event = data.events[0]; event.evidence[0].relationship = first;
+    event.evidence.push({ ...event.evidence[0], id: 'conflicting-reference-evidence', claim_id: aliasClaim ? 'claim-a-repeat' : 'claim-a', relationship: second });
+    const reference = structuredClone(data); delete reference.scope; delete reference.runs;
+    assert.throws(() => validateReferenceArtifact(reference), { code: 'QUALITY_ARTIFACT_INVALID' });
+    assert.throws(() => validateArtifact(data), { code: 'QUALITY_ARTIFACT_INVALID' });
+    assert.throws(() => evaluateArtifact(data), { code: 'QUALITY_ARTIFACT_INVALID' });
+  });
+}
+for (const relationship of ['support','contradict','insufficient']) test('corpus defense: agreeing reference aliases do not increase evidence metrics, label=' + relationship, () => {
+  const data = fixture(), event = data.events[0]; event.evidence[0].relationship = relationship;
+  const before = evaluateArtifact(data).runs[0];
+  event.evidence.push({ ...event.evidence[0], id: 'agreeing-reference-alias', claim_id: 'claim-a-repeat' });
+  data.runs[0].claims.push({ ...data.runs[0].claims[0], id: 'alias-output-claim', reference_claim_id: 'claim-a-repeat' });
+  data.runs[0].evidence.push({ ...data.runs[0].evidence[0], id: 'alias-observation', claim_output_id: 'alias-output-claim', reference_evidence_id: 'agreeing-reference-alias' });
+  const reference = structuredClone(data); delete reference.scope; delete reference.runs;
+  const unchanged = structuredClone(reference); validateReferenceArtifact(reference); assert.deepEqual(reference, unchanged);
+  const after = evaluateArtifact(data).runs[0];
+  assert.deepEqual(after.metrics.evidence_support, before.metrics.evidence_support);
+  assert.deepEqual(after.metrics.evidence_traceability, before.metrics.evidence_traceability);
+  assert.deepEqual(after.evidence_observations, { raw: 2, unique: 1, duplicates: 1 });
+});
+test('corpus defense: distinct spans and unrelated claim targets stay independently countable', () => {
+  const data = fixture(), event = data.events[0], original = event.evidence[0];
+  event.evidence.push({ ...original, id: 'short-reference', start: 4, end: 18, excerpt: 'fictional hall' });
+  event.claims.push({ ...event.claims[0], id: 'other-reference-claim', text: 'The fictional hall remained open.', equivalence_group: 'other-group' });
+  event.evidence.push({ ...original, id: 'other-reference-evidence', claim_id: 'other-reference-claim', relationship: 'contradict' });
+  data.runs[0].claims.push({ id: 'other-output', reference_claim_id: 'other-reference-claim', supported: true, attribution_correct: true });
+  data.runs[0].evidence.push({ ...data.runs[0].evidence[0], id: 'short-observation', reference_evidence_id: 'short-reference', excerpt: 'fictional hall' },
+    { ...data.runs[0].evidence[0], id: 'other-observation', claim_output_id: 'other-output', reference_evidence_id: 'other-reference-evidence', human_support: 'contradict' });
+  const m = metrics(data); assert.equal(m.evidence_support.denominator, 3); assert.equal(m.evidence_support.numerator, 2);
+  assert.equal(m.evidence_traceability.denominator, 3);
+});
+test('corpus defense: direct reference equivalent relation requires the same group', () => {
+  const reference = referenceArtifact(), relation = reference.events[0].relations.find(row => row.kind === 'equivalent');
+  relation.claim_ids = ['claim-a','claim-b'];
+  assert.throws(() => validateReferenceArtifact(reference), { code: 'QUALITY_ARTIFACT_INVALID' });
+  const scoring = fixture(); scoring.events[0].relations.find(row => row.kind === 'equivalent').claim_ids = [...relation.claim_ids];
+  assert.throws(() => evaluateArtifact(scoring), { code: 'QUALITY_ARTIFACT_INVALID' });
+});
+for (const classification of ['direct','temporal']) for (const sameGroup of [false,true]) {
+  test('corpus defense: reference conflict ' + classification + ', same group=' + sameGroup, () => {
+    const reference = referenceArtifact(), event = reference.events[0];
+    event.relations.find(row => row.kind === 'conflict').classification = classification;
+    if (sameGroup) event.claims.find(row => row.id === 'claim-d').equivalence_group = event.claims.find(row => row.id === 'claim-c').equivalence_group;
+    if (sameGroup) assert.throws(() => validateReferenceArtifact(reference), { code: 'QUALITY_ARTIFACT_INVALID' });
+    else assert.equal(validateReferenceArtifact(reference), reference);
+  });
+}
+for (const kind of ['normal_update','correction','ambiguous','conflict']) test('corpus defense: exempt relation semantics ' + kind + ' do not force group separation', () => {
+  const reference = referenceArtifact(), event = reference.events[0];
+  const relation = event.relations.find(row => row.kind === kind);
+  if (kind === 'conflict') relation.classification = 'partial';
+  const [a,b] = relation.claim_ids.map(value => event.claims.find(row => row.id === value));
+  b.equivalence_group = a.equivalence_group;
+  assert.equal(validateReferenceArtifact(reference), reference);
+});
+test('corpus defense: explicit equivalent propositions contribute one actual recall target', () => {
+  const data = fixture(), event = data.events[0];
+  const before = metrics(data).claim_recall;
+  event.claims.push({ ...event.claims[0], id: 'paraphrase-reference', text: 'On Monday the fictional hall was closed.' });
+  event.relations.push({ id: 'paraphrase-equivalent', claim_ids: ['claim-a','paraphrase-reference'], kind: 'equivalent', classification: 'none', required_disclosure: false, resolution: 'resolved', notes: 'Synthetic human-labelled equivalence.' });
+  data.runs[0].claims.push({ ...data.runs[0].claims[0], id: 'paraphrase-output', reference_claim_id: 'paraphrase-reference' });
+  assert.deepEqual(metrics(data).claim_recall, before); assert.equal(before.numerator, 2); assert.equal(before.denominator, 5);
+});

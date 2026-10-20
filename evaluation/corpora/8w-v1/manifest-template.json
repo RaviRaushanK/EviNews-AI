@@ -1,0 +1,52 @@
+{
+  "format": "8w-corpus-authoring-v1",
+  "kind": "synthetic-template",
+  "corpus_id": "template-corpus",
+  "corpus_version": "v1",
+  "annotation_version": "a1",
+  "status": "draft",
+  "evaluator_version": "8w-quality-v1",
+  "evaluator_commit": null,
+  "freeze_at": null,
+  "change_notes": ["SYNTHETIC TEMPLATE ONLY: fictional text and placeholder reviewers, not real news or completed human review."],
+  "revision": null,
+  "factual_truth_verified": false,
+  "events": [
+    {
+      "id": "template-dev", "scenario": "A", "split": "development", "status": "draft",
+      "assessment_cutoff": "2026-01-03T00:00:00Z",
+      "history": [{"status":"draft","at":"2026-01-04T00:00:00Z","note":"Synthetic draft created."}],
+      "freeze": null,
+      "reports": [{
+        "id": "template-report-dev", "source_id": "template-source-dev", "title": "Fictional closure example",
+        "publisher": {"id":"template-publisher-dev","name":"Synthetic Publisher D"},
+        "url": "https://fixture.invalid/template/closure.html",
+        "published_at": "2026-01-01T10:00:00Z", "collected_at": "2026-01-02T10:00:00Z", "frozen_at": "2026-01-02T11:00:00Z", "occurred_at": null,
+        "time_uncertain": false, "date_fallback": false,
+        "origin_group": "template-origin-dev", "independence": "unknown", "independence_rationale": "Synthetic example; no real independence investigation occurred.",
+        "sha256": "52352a1ae951a116164850f64e48f9d8cb22e5c1c67345317fda084322bd9bfc",
+        "artifact_path": "artifacts/8w-v1/reports/template-report-dev.txt",
+        "storage": {"classification":"synthetic","approved":true,"rationale":"Invented text only; this attestation grants no real article permission."},
+        "complete": true, "truncation_note": ""
+      }]
+    },
+    {
+      "id": "template-assessment", "scenario": "C", "split": "assessment", "status": "draft",
+      "assessment_cutoff": "2026-01-03T00:00:00Z",
+      "history": [{"status":"draft","at":"2026-01-04T00:00:00Z","note":"Synthetic assessment slot; no real event selected."}],
+      "freeze": null,
+      "reports": [{
+        "id": "template-report-assessment", "source_id": "template-source-assessment", "title": "Fictional reopening example",
+        "publisher": {"id":"template-publisher-assessment","name":"Synthetic Publisher A"},
+        "url": "https://fixture.invalid/template/reopening.html?edition=example",
+        "published_at": "2026-01-02T10:00:00Z", "collected_at": "2026-01-02T11:00:00Z", "frozen_at": "2026-01-02T12:00:00Z", "occurred_at": null,
+        "time_uncertain": false, "date_fallback": false,
+        "origin_group": "template-origin-assessment", "independence": "unknown", "independence_rationale": "Synthetic example; different publisher names do not establish independence.",
+        "sha256": "56237b5a8c6e7e6cca57e08e7bfb5a804fdd95b32604c47d4b7154a307698bdf",
+        "artifact_path": "artifacts/8w-v1/reports/template-report-assessment.txt",
+        "storage": {"classification":"synthetic","approved":true,"rationale":"Invented text only; not a real news snapshot."},
+        "complete": true, "truncation_note": ""
+      }]
+    }
+  ]
+}

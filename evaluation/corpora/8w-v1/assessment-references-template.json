@@ -1,0 +1,14 @@
+[
+  {
+    "event_id": "template-assessment",
+    "sources": [{"report_id":"template-report-assessment","text":"The fictional hall reopened on Tuesday."}],
+    "claims": [{
+      "id":"template-claim-assessment","report_id":"template-report-assessment","proposition":"The fictional hall reopened on Tuesday.","type":"fact",
+      "equivalence_group":"template-group-assessment","attribution":"Synthetic Publisher A","modality":"reported","quantity":null,"unit":null,
+      "location":"fictional hall","relevant_time":"Tuesday","scope":"Reopening of the fictional hall only.","uncertainty":"none","review_state":"provisional"
+    }],
+    "evidence": [{"id":"template-evidence-assessment","claim_id":"template-claim-assessment","report_id":"template-report-assessment","excerpt":"The fictional hall reopened on Tuesday.","start":0,"end":39,"relationship":"support"}],
+    "relations": [], "changes": [],
+    "summary": {"required_groups":["template-group-assessment"],"optional_groups":[],"prohibited_settled_assertions":["The fictional hall never reopened."],"expected_abstention":false,"abstention_rationale":"Synthetic source support is available.","salience_notes":"Assessment template only: no real assessment labels exist."}
+  }
+]

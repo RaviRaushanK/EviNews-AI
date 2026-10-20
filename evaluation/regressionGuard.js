@@ -12,13 +12,14 @@ const SUITES = Object.freeze({
   transport: 'test-single-request-https-transport.js', workflow: 'test-offline-summary-workflow.js',
   'multi-event': 'test-multi-event-evaluation.js', validation: 'test-summary-validation.js',
   grounding: 'test-summary-grounding.js', loopback: 'test-offline-summary-loopback.js', native: 'test-native-summary-launcher.js',
-  quality: 'test-real-world-quality.js'
+  quality: 'test-real-world-quality.js', corpus: 'test-quality-corpus.js'
 });
 const SOURCES = [
   'scripts/evaluate-live-summaries.js', 'scripts/evaluate-multi-event.js', 'scripts/test-regression-guard.js',
   ...Object.values(SUITES).map(file => 'scripts/' + file),
   'evaluation/regressionGuard.js', 'evaluation/liveSummarySafety.js', 'evaluation/providerDispatch.js',
   'evaluation/realWorldQuality.js', 'scripts/evaluate-real-world-quality.js',
+  'evaluation/corpusPreparation.js', 'scripts/validate-quality-corpus.js',
   'evaluation/singleRequestHttpsTransport.js', 'evaluation/evaluationCredentialChannel.js',
   'evaluation/offlineSummaryWorkflow.js', 'evaluation/offlineSummaryDependencies.js',
   'evaluation/nativeSummaryLauncher.js', 'evaluation/nativeSummaryWorker.js',
@@ -32,6 +33,11 @@ const SOURCES = [
 ];
 const ASSETS = ['package.json', 'fixtures/phase7-multi-event-evaluation.json', 'fixtures/contradiction-evaluation.json',
   'fixtures/phase6-utilities.json', 'fixtures/phase7-summaries.json', 'fixtures/real-world-quality-template.json',
+  'evaluation/corpora/8w-v1/manifest-template.json',
+  'evaluation/corpora/8w-v1/development-references-template.json',
+  'evaluation/corpora/8w-v1/assessment-references-template.json',
+  'evaluation/corpora/8w-v1/reviewer-annotations-template.json',
+  'evaluation/corpora/8w-v1/adjudications-template.json',
   'fixtures/tls/loopback-cert.pem', 'fixtures/tls/loopback-key.pem', 'fixtures/tls/untrusted-cert.pem'];
 const BUILTINS = new Set(['assert', 'assert/strict', 'test', 'crypto', 'fs', 'fs/promises', 'path', 'module', 'events',
   'https', 'http', 'net', 'tls', 'dns', 'dns/promises', 'child_process', 'url']);

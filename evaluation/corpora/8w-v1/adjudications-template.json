@@ -1,0 +1,4 @@
+[
+  {"event_id":"template-dev","state":"pending","adjudicator_id":"template-adjudicator","reference_fingerprint":null,"disagreements":[{"id":"template-disagreement","subject_id":"template-dev","category":"summary","required":true,"resolution":"unresolved","notes":"Invented example of a required decision; not resolved human review."}],"notes":"Synthetic adjudication template; do not treat as completed review."},
+  {"event_id":"template-assessment","state":"pending","adjudicator_id":"template-adjudicator","reference_fingerprint":null,"disagreements":[],"notes":"Synthetic placeholder: adjudication has NOT occurred."}
+]

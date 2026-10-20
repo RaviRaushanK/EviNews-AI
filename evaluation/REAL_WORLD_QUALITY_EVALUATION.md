@@ -117,10 +117,18 @@ share a recall target. An exact claim identity includes every claim field except
 ID and equivalence group, with text whitespace normalized. Identical identities
 must share the same equivalence group; inconsistent groups are rejected. Different
 wording remains a human equivalence judgement, not inferred paraphrase detection.
+Explicit equivalent relations require the same group; direct/temporal conflict
+relations require different groups. Partial conflicts, normal updates, corrections
+and excluded comparisons do not automatically impose this separation rule.
 Evidence records its claim/report, exact excerpt, UTF-16
 start/end offsets and human relationship: support, contradict or insufficient.
 Bounds require integer 0 <= start < end <= source length before slicing.
 Occurrence in a source and support for a proposition are NOT the same label.
+Reference evidence identity is canonical claim identity, report, start/end and
+exact excerpt. Agreeing aliases are allowed, but conflicting relationship labels
+for that identity reject both reference-only and full evaluation artifacts.
+Corpus projection emits one deterministic representative; direct reference
+validation preserves IDs so captured observations can still use valid aliases.
 
 Relations contain two different claim IDs, kind (equivalent, conflict,
 normal_update, correction, ambiguous), classification (direct/partial/temporal/
@@ -157,8 +165,8 @@ silently adding coverage. Non-supporting statements may retain explicit empty
 or insufficient child support for evaluation, without receiving coverage credit.
 
 Evidence observations are keyed by canonical reference claim identity, source
-report and reference start/end offsets, not observation or reference IDs. Agreeing
-duplicates count once in both evidence metrics; different excerpt or semantic
+report, reference start/end offsets and exact reference excerpt, not observation
+or reference IDs. Agreeing duplicates count once in both evidence metrics; different excerpt or semantic
 support annotations for the same key fail closed. Raw, unique and duplicate
 observation counts remain visible. Distinct source spans/claim links remain
 independently countable. This is metric deduplication, not a database operation.
